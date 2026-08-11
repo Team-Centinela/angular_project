@@ -12,8 +12,8 @@ import { Category } from '../../models/category';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-  searchText: string = '';
-  selectedCategory: string = '';
+  readonly searchText = signal('');
+  readonly selectedCategory = signal('');
   loading: boolean = false;
 
   readonly categories: Category[] = [
@@ -30,10 +30,10 @@ export class HomeComponent {
   ]);
 
   readonly filteredProducts = computed(() => {
-    const search = this.searchText.toLowerCase();
-    const catId = this.selectedCategory;
+    const search = this.searchText().toLowerCase();
+    const catId = this.selectedCategory();
     return this.products().filter(p => {
-      const matchesSearch = this.searchText === '' ||
+      const matchesSearch = this.searchText() === '' ||
         p.name.toLowerCase().includes(search) ||
         (p.description ?? '').toLowerCase().includes(search);
       const matchesCategory = catId === '' || p.categoryId === catId;
