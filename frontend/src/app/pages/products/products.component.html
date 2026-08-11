@@ -1,0 +1,96 @@
+<!--
+  Plantilla: products.component.html
+  Tabla con productos + modal para crear/editar.
+  Estructura:
+    1. Título y botón Nuevo
+    2. Mensajes (error / loading)
+    3. Tabla de productos
+    4. Modal con formulario (solo cuando showForm === true)
+-->
+
+<h2>Productos</h2>
+
+<button type="button" (click)="openNew()">+ Nuevo producto</button>
+
+@if (errorMsg) {
+  <p class="error">{{ errorMsg }}</p>
+}
+
+@if (loading()) {
+  <p class="loading">Cargando productos...</p>
+}
+
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Categoría</th>
+      <th>Precio</th>
+      <th>Stock</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (p of products(); track p.id) {
+      <tr>
+        <td>{{ p.name }}</td>
+        <td>{{ p.category?.name }}</td>
+        <td>{{ p.price | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+        <td>{{ p.stock }}</td>
+        <td>
+          <button type="button" (click)="openEdit(p)">Editar</button>
+          <button type="button" (click)="delete(p)">Eliminar</button>
+        </td>
+      </tr>
+    } @empty {
+      <tr><td colspan="5" class="empty">No hay productos todavía.</td></tr>
+    }
+  </tbody>
+</table>
+
+@if (showForm) {
+  <div class="modal">
+    <div class="modal-box">
+      <h3>{{ editingId ? 'Editar producto' : 'Nuevo producto' }}</h3>
+
+      <label>Nombre *</label>
+      <input type="text" [(ngModel)]="form.name" name="name" />
+
+      <label>Descripción</label>
+      <textarea rows="3" [(ngModel)]="form.description" name="description"></textarea>
+
+      <label>Precio *</label>
+      <input type="number" [(ngModel)]="form.price" name="price" min="0" />
+
+      <label>Stock *</label>
+      <input type="number" [(ngModel)]="form.stock" name="stock" min="0" />
+
+      <label>Categoría *</label>
+      <select [(ngModel)]="form.categoryId" name="categoryId">
+        <option value="">-- Selecciona --</option>
+        @for (c of categories(); track c.id) {
+          <option [value]="c.id">{{ c.name }}</option>
+        }
+      </select>
+
+      <label>Imágenes (URL)</label>
+      <div class="image-list">
+        @for (img of form.images; track img; let i = $index) {
+          <div class="image-row">
+            <img [src]="img" alt="img" width="60" />
+            <button type="button" (click)="removeImage(i)">Quitar</button>
+          </div>
+        }
+      </div>
+      <div class="image-input">
+        <input type="url" placeholder="https://..." [(ngModel)]="imageUrl" name="imageUrl" />
+        <button type="button" (click)="addImage()">Agregar</button>
+      </div>
+
+      <div class="actions">
+        <button type="button" (click)="save()">Guardar</button>
+        <button type="button" (click)="cancel()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+}
