@@ -30,14 +30,14 @@ gitGraph
     commit id: "feat/login-form"
     commit id: "feat/login-validation"
     checkout develop
-    merge feature/login id: "squash"
+    merge feature/login id: "squash-login"
     branch feature/products
     checkout feature/products
     commit id: "feat/products-crud"
     checkout develop
-    merge feature/products id: "squash"
+    merge feature/products id: "squash-products"
     checkout main
-    merge develop id: "merge --no-ff" type: HIGHLIGHT
+    merge develop id: "release-merge" type: HIGHLIGHT
 ```
 
 ### Branch Types
