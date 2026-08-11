@@ -1,0 +1,36 @@
+<div class="home">
+  <h1>Productos</h1>
+
+  <div class="filters">
+    <input
+      type="text"
+      placeholder="Buscar productos..."
+      [(ngModel)]="searchText"
+      name="search"
+    />
+
+    <select [(ngModel)]="selectedCategory" name="category">
+      <option value="">Todas las categorías</option>
+      @for (cat of categories; track cat.id) {
+        <option [value]="cat.id">{{ cat.name }}</option>
+      }
+    </select>
+  </div>
+
+  @if (loading) {
+    <p class="loading">Cargando productos...</p>
+  } @else if (filteredProducts().length === 0) {
+    <p class="empty">No hay productos para mostrar.</p>
+  } @else {
+    <div class="grid">
+      @for (p of filteredProducts(); track p.id) {
+        <article class="card">
+          <h3>{{ p.name }}</h3>
+          <p>{{ p.description }}</p>
+          <p class="price">{{ p.price | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
+          <p class="stock">Stock: {{ p.stock }}</p>
+        </article>
+      }
+    </div>
+  }
+</div>
