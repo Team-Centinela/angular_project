@@ -1,57 +1,71 @@
-# Team Centinela - Product Management System
+# Team Centinela - Sistema de Gestión de Productos
 
-Angular 22 application for product management with authentication, consuming a REST API.
+Aplicación web fullstack para la gestión de productos con autenticación, que consume una API REST.
 
-## 👥 Team
+## 👥 Equipo
 
-| Name | Role |
-|------|------|
-| Santiago Diaz Mayorquin | Frontend Developer |
-| Jeronimo Torres | Frontend Developer |
-| Santiago Sanchez | Frontend Developer |
-| Juliana Sofia Valencia | Frontend Developer |
-| Sebastian Torres | Frontend Developer |
+| Nombre | Rol |
+|--------|-----|
+| Santiago Diaz Mayorquin | Desarrollador Frontend |
+| Jeronimo Torres | Desarrollador Frontend |
+| Santiago Sanchez | Desarrollador Frontend |
+| Juliana Sofia Valencia | Desarrollador Frontend |
+| Sebastian Torres | Desarrollador Frontend |
 
-### Assignment owner
-- Carlos D. Castaño, Team Lead 
+### Responsable del encargo
+- Carlos D. Castaño, Team Lead
 
-## 🛠 Technologies
+## 🛠 Tecnologías
 
-- **Framework:** Angular 22
-- **Language:** TypeScript
-- **Styling:** CSS/SCSS
-- **HTTP Client:** Angular HttpClient
-- **Authentication:** JWT (JSON Web Tokens)
-- **Package Manager:** npm
+### Frontend
+- **Framework:** Angular 18
+- **Lenguaje:** TypeScript
+- **Estilos:** CSS/SCSS, Bootstrap
+- **Cliente HTTP:** Angular HttpClient
+- **Autenticación:** JWT (JSON Web Tokens)
+- **Gestor de paquetes:** npm
 
-## 📁 Project Architecture
+### Backend
+- **Framework:** NestJS
+- **Lenguaje:** TypeScript
+- **ORM:** Prisma / TypeORM (según implementación en `backend/`)
+- **Autenticación:** JWT
+- **Gestor de paquetes:** npm
+
+### Base de datos
+- **PostgreSQL** gestionado con Supabase
+
+### Infraestrutura
+- **Docker** y **docker-compose** para orquestación de contenedores
+
+## 📁 Arquitectura del proyecto
 
 ```mermaid
 graph TB
-    subgraph Pages
-        HOME[Home - Public]
-        DETAIL[Product Detail - Public]
+    subgraph Páginas
+        HOME[Home - Pública]
+        DETAIL[Detalle de Producto - Pública]
         LOGIN[Login]
-        REGISTER[Register]
-        PRODUCTS[Products - Protected]
-        CATEGORIES[Categories - Protected]
-        FAVORITES[Favorites - Protected]
-        PROFILE[Profile - Protected]
+        REGISTER[Registro]
+        PRODUCTS[Productos - Protegida]
+        CATEGORIES[Categorías - Protegida]
+        FAVORITES[Favoritos - Protegida]
+        PROFILE[Perfil - Protegido]
     end
 
-    subgraph Core
+    subgraph Núcleo
         ROUTES[Angular Router]
         GUARD[Auth Guard]
         INTERCEPTOR[Auth Interceptor]
     end
 
-    subgraph Services
+    subgraph Servicios
         AUTH[Auth Service]
         PRODUCT[Product Service]
         CATEGORY[Category Service]
     end
 
-    subgraph UI Components
+    subgraph Componentes UI
         NAVBAR[Navbar]
         SIDEBAR[Sidebar]
         FOOTER[Footer]
@@ -60,138 +74,184 @@ graph TB
         SEARCH_BAR[Search Bar]
     end
 
-    ROUTES -->|Protects| GUARD
-    GUARD -->|Redirects| LOGIN
-    INTERCEPTOR -->|Adds JWT| AUTH
+    ROUTES -->|Protege| GUARD
+    GUARD -->|Redirige| LOGIN
+    INTERCEPTOR -->|Añade JWT| AUTH
     PAGES --> SERVICES
     SERVICES --> INTERCEPTOR
-    UI_COMPONENTS[UI Components] --> PAGES
+    UI_COMPONENTS[Componentes UI] --> PAGES
 ```
 
-## 🔐 Authentication Flow
+## 🔐 Flujo de autenticación
 
 ```mermaid
 sequenceDiagram
-    participant User
+    participant Usuario
     participant Angular
     participant Guard
     participant Interceptor
     participant API
 
-    User->>Angular: Access Protected Route
-    Guard->>Guard: Check JWT existence
-    Guard->>User: No JWT → Redirect /login
-    
-    User->>Angular: Login credentials
+    Usuario->>Angular: Accede a una ruta protegida
+    Guard->>Guard: Verifica existencia del JWT
+    Guard->>Usuario: Sin JWT → Redirige a /login
+
+    Usuario->>Angular: Credenciales de login
     Angular->>API: POST /auth/login
-    API->>Angular: JWT Token
-    Angular->>User: Store JWT, Redirect
-    
-    User->>Angular: Request protected resource
-    Angular->>Interceptor: HTTP Request
-    Interceptor->>Interceptor: Add Bearer Token
-    Interceptor->>API: Request with JWT
+    API->>Angular: Token JWT
+    Angular->>Usuario: Almacena JWT y redirige
+
+    Usuario->>Angular: Solicita recurso protegido
+    Angular->>Interceptor: Petición HTTP
+    Interceptor->>Interceptor: Añade Bearer Token
+    Interceptor->>API: Petición con JWT
     API->>Angular: 200 OK
-    Angular->>User: Data
-    
+    Angular->>Usuario: Datos
+
     alt 401 Unauthorized
         API->>Interceptor: 401
-        Interceptor->>Angular: Clear JWT
-        Angular->>User: Redirect /login
+        Interceptor->>Angular: Limpia JWT
+        Angular->>Usuario: Redirige a /login
     end
 ```
 
-## ✨ Features
+## ✨ Funcionalidades
 
-### Public Features
-- **Home** - Product listing with search and category filter
-- **Product Detail** - Full product information with images
-- **Login/Register** - User authentication
+### Públicas
+- **Home** - Listado de productos con búsqueda y filtro por categoría
+- **Detalle de Producto** - Información completa del producto con imágenes
+- **Login / Registro** - Autenticación de usuarios
 
-### Protected Features (Require Authentication)
-- **Products Management** - Full CRUD operations
-- **Categories Management** - Full CRUD operations
-- **Favorites** - User's favorite products
-- **Profile** - User info and password change
-- **Logout** - Session termination
+### Protegidas (requieren autenticación)
+- **Gestión de Productos** - Operaciones CRUD completas
+- **Gestión de Categorías** - Operaciones CRUD completas
+- **Favoritos** - Productos favoritos del usuario
+- **Perfil** - Información del usuario y cambio de contraseña
+- **Logout** - Cierre de sesión
 
-## 📦 API Endpoints
+## 📦 Endpoints de la API
 
-| Method | Endpoint | Description | Auth |
+| Método | Endpoint | Descripción | Auth |
 |--------|----------|-------------|------|
-| GET | `/products` | List all products | No |
-| GET | `/products?search=` | Search products | No |
-| GET | `/products/:id` | Product detail | No |
-| POST | `/products` | Create product | Yes |
-| PATCH | `/products/:id` | Update product | Yes |
-| DELETE | `/products/:id` | Delete product | Yes |
-| GET | `/categories` | List categories | No |
-| POST | `/categories` | Create category | Yes |
-| PATCH | `/categories/:id` | Update category | Yes |
-| DELETE | `/categories/:id` | Delete category | Yes |
-| GET | `/favorites` | User favorites | Yes |
-| POST | `/favorites/:productId` | Add favorite | Yes |
-| DELETE | `/favorites/:productId` | Remove favorite | Yes |
-| GET | `/users/me` | Current user | Yes |
-| PATCH | `/users/me/password` | Change password | Yes |
-| POST | `/auth/login` | Login | No |
-| POST | `/auth/register` | Register | No |
-| POST | `/auth/logout` | Logout | Yes |
+| POST | `/auth/login` | Iniciar sesión | No |
+| POST | `/auth/register` | Registrar usuario | No |
+| POST | `/auth/logout` | Cerrar sesión | Sí |
+| GET | `/products` | Listar productos | No |
+| GET | `/products?search=` | Buscar productos | No |
+| GET | `/products/:id` | Detalle de producto | No |
+| POST | `/products` | Crear producto | Sí |
+| PATCH | `/products/:id` | Actualizar producto | Sí |
+| DELETE | `/products/:id` | Eliminar producto | Sí |
+| GET | `/categories` | Listar categorías | No |
+| POST | `/categories` | Crear categoría | Sí |
+| PATCH | `/categories/:id` | Actualizar categoría | Sí |
+| DELETE | `/categories/:id` | Eliminar categoría | Sí |
+| GET | `/favorites` | Favoritos del usuario | Sí |
+| POST | `/favorites/:productId` | Añadir favorito | Sí |
+| DELETE | `/favorites/:productId` | Quitar favorito | Sí |
+| GET | `/users/me` | Usuario actual | Sí |
+| PATCH | `/users/me/password` | Cambiar contraseña | Sí |
 
-## 🚀 Installation & Running
+**Documentación interactiva (Swagger):** `http://localhost:3000/api/docs`
+
+## 🚀 Instalación
+
+### Backend
 
 ```bash
-# Install dependencies
+cd backend
 npm install
+```
 
-# Run development server
+### Frontend
+
+```bash
+cd frontend
+npm install
+```
+
+## ▶️ Ejecución
+
+### Sin Docker
+
+**Backend:**
+```bash
+cd backend
+npm run start:dev
+```
+
+**Frontend:**
+```bash
+cd frontend
 npm start
-
-# Build for production
-npm run build
 ```
 
-The application runs on `http://localhost:4200`
+### Con Docker
 
-## 📡 API Configuration
-
-The application connects to the Product Management API (NestJS) running locally.
-
-**API Repository:** [gestion-de-productos](https://github.com/carlosdcastano/gestion-de-productos.git)
-
-> The backend is included as a git subtree in `backend/` directory. See [CONTRIBUTING.md](./CONTRIBUTING.md) for subtree management.
-
-## 📂 Project Structure
-
-```
-src/app/
-├── pages/              # Page components (routes)
-│   ├── home/
-│   ├── login/
-│   ├── register/
-│   ├── products/
-│   ├── categories/
-│   ├── favorites/
-│   └── profile/
-├── components/         # Reusable UI components
-│   ├── layout/
-│   │   ├── navbar/
-│   │   ├── sidebar/
-│   │   └── footer/
-│   └── ui/
-│       ├── product-card/
-│       ├── loading/
-│       └── search-bar/
-├── services/           # API communication
-│   ├── auth.service.ts
-│   ├── product.service.ts
-│   └── category.service.ts
-├── guards/             # Route protection
-│   └── auth.guard.ts
-├── interceptors/       # HTTP interceptors
-│   └── auth.interceptor.ts
-├── models/             # TypeScript interfaces
-└── app.routes.ts       # Route configuration
+```bash
+docker-compose up --build
 ```
 
+## 🌐 URLs por defecto
 
+- **Frontend:** http://localhost:4200
+- **Backend:** http://localhost:3000
+- **Swagger (documentación API):** http://localhost:3000/api/docs
+
+## 🗄️ Base de datos
+
+Se utiliza **Supabase** (PostgreSQL gestionado). La configuración de conexión se encuentra en el archivo `backend/.env`:
+
+```
+DATABASE_URL=postgresql://<usuario>:<contraseña>@<host>:<puerto>/postgres
+JWT_SECRET=<secreto-del-equipo>
+JWT_EXPIRES_IN=1d
+```
+
+## ⚙️ Configuración de la API
+
+El frontend se conecta al backend NestJS a través del proxy configurado en `frontend/proxy.conf.json`, que resuelve las llamadas a `/api` hacia `http://localhost:3000`. En caso de necesitar cambiar la URL base, modificar los archivos de entorno en `frontend/src/environments/`.
+
+## 📂 Estructura del proyecto
+
+```
+.
+├── backend/                    # API NestJS
+│   ├── src/
+│   ├── Dockerfile
+│   └── package.json
+├── frontend/                   # Aplicación Angular 18
+│   ├── src/
+│   │   └── app/
+│   │       ├── pages/          # Componentes de página (rutas)
+│   │       │   ├── home/
+│   │       │   ├── login/
+│   │       │   ├── register/
+│   │       │   ├── products/
+│   │       │   ├── categories/
+│   │       │   ├── favorites/
+│   │       │   └── profile/
+│   │       ├── components/     # Componentes UI reutilizables
+│   │       │   ├── layout/
+│   │       │   │   ├── navbar/
+│   │       │   │   ├── sidebar/
+│   │       │   │   └── footer/
+│   │       │   └── ui/
+│   │       │       ├── product-card/
+│   │       │       ├── loading/
+│   │       │       └── search-bar/
+│   │       ├── services/       # Comunicación con la API
+│   │       │   ├── auth.service.ts
+│   │       │   ├── product.service.ts
+│   │       │   └── category.service.ts
+│   │       ├── guards/         # Protección de rutas
+│   │       │   └── auth.guard.ts
+│   │       ├── interceptors/   # Interceptores HTTP
+│   │       │   └── auth.interceptor.ts
+│   │       ├── models/         # Interfaces TypeScript
+│   │       └── app.routes.ts   # Configuración de rutas
+│   ├── Dockerfile
+│   └── package.json
+├── docker-compose.yml
+└── README.md
+```
