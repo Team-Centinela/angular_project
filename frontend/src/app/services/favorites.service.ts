@@ -17,6 +17,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Favorite } from '../models/favorite';
 import { Product } from '../models/product';
 
 @Injectable({ providedIn: 'root' })
@@ -29,9 +30,12 @@ export class FavoritesService {
     return this.http.get<Product[]>(this.base);
   }
 
-  /** Marca un producto como favorito. 409 si ya estaba. */
-  add(productId: string): Observable<void> {
-    return this.http.post<void>(`${this.base}/${productId}`, {});
+  /**
+   * Marca un producto como favorito. Devuelve el Favorite creado.
+   * 409 si ya estaba en favoritos.
+   */
+  add(productId: string): Observable<Favorite> {
+    return this.http.post<Favorite>(`${this.base}/${productId}`, {});
   }
 
   /** Quita un producto de favoritos. 204 si OK, 404 si no estaba. */
