@@ -1,0 +1,13 @@
+<article class="card" (click)="onClick()">
+  @if (product.images && product.images.length > 0) {
+    <img [src]="product.images[0].url" [alt]="product.name" class="image" />
+  } @else {
+    <div class="image placeholder">Sin imagen</div>
+  }
+
+  <div class="body">
+    <h3 class="name">{{ product.name }}</h3>
+    <p class="category">{{ product.category?.name }}</p>
+    <p class="price">${{ product.price }}</p>
+  </div>
+</article>
