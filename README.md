@@ -155,9 +155,11 @@ The application runs on `http://localhost:4200`
 
 ## 📡 API Configuration
 
-The application connects to the Product Management API. Update the API URL in the environment configuration if needed.
+The application connects to the Product Management API (NestJS) running locally.
 
 **API Repository:** [gestion-de-productos](https://github.com/carlosdcastano/gestion-de-productos.git)
+
+> The backend is included as a git subtree in `backend/` directory. See [CONTRIBUTING.md](./CONTRIBUTING.md) for subtree management.
 
 ## 📂 Project Structure
 
