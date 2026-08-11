@@ -79,14 +79,17 @@ export class ProductsComponent implements OnInit {
   /** Pide la lista de productos al backend. Pasa limit=1000 para traer todos. */
   loadProducts() {
     this.loading.set(true);
-    this.productService.getAll(undefined, undefined, 1, 1000).subscribe({
-      next: (res) => {
-        this.products.set(res.data);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.errorMsg.set('No se pudieron cargar los productos');
-        this.loading.set(false);
+    this.productService
+      .getAll(undefined, undefined, 1, 1000)
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (res) => {
+          this.products.set(res.data);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.errorMsg.set('No se pudieron cargar los productos');
+          this.loading.set(false);
       },
     });
   }
