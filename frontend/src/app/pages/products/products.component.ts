@@ -14,15 +14,18 @@
  *   - @if / @for de control flow (spec evalúa directivas nuevas)
  *   - currency pipe (spec evalúa Pipes)
  *   - inject() para DI
+ *   - takeUntilDestroyed() para no dejar subscripciones vivas al destruir
  */
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Category } from '../../models/category';
 import { Product } from '../../models/product';
 import { CategoryService } from '../../services/category.service';
 import { ProductService } from '../../services/product.service';
+import { extractErrorMessage } from '../../utils/error.util';
 
 /** Estado del formulario (no usamos signals porque ngModel requiere propiedad). */
 interface ProductForm {
@@ -50,7 +53,8 @@ export class ProductsComponent implements OnInit {
   products = signal<Product[]>([]);
   categories = signal<Category[]>([]);
   loading = signal(false);
-  errorMsg = '';
+  /** Mensaje de error como signal para consistencia con el resto. */
+  errorMsg = signal('');
   showForm = false;
   editingId: string | null = null;
   imageUrl = '';
@@ -72,16 +76,16 @@ export class ProductsComponent implements OnInit {
 
   // ---------- Carga ----------
 
-  /** Pide la lista de productos al backend. */
+  /** Pide la lista de productos al backend. Pasa limit=1000 para traer todos. */
   loadProducts() {
     this.loading.set(true);
-    this.productService.getAll().subscribe({
+    this.productService.getAll(undefined, undefined, 1, 1000).subscribe({
       next: (res) => {
         this.products.set(res.data);
         this.loading.set(false);
       },
       error: () => {
-        this.errorMsg = 'No se pudieron cargar los productos';
+        this.errorMsg.set('No se pudieron cargar los productos');
         this.loading.set(false);
       },
     });
@@ -89,10 +93,12 @@ export class ProductsComponent implements OnInit {
 
   /** Pide las categorías para popular el <select>. */
   loadCategories() {
-    this.categoryService.getAll().subscribe({
-      next: (cats) => this.categories.set(cats),
-      error: () => (this.errorMsg = 'No se pudieron cargar las categorías'),
-    });
+    this.categoryService.getAll()
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (cats) => this.categories.set(cats),
+        error: () => this.errorMsg.set('No se pudieron cargar las categorías'),
+      });
   }
 
   // ---------- Acciones ----------
@@ -108,7 +114,7 @@ export class ProductsComponent implements OnInit {
       categoryId: '',
       images: [],
     };
-    this.errorMsg = '';
+    this.errorMsg.set('');
     this.showForm = true;
   }
 
@@ -123,7 +129,7 @@ export class ProductsComponent implements OnInit {
       categoryId: p.categoryId,
       images: (p.images ?? []).map((i) => i.url),
     };
-    this.errorMsg = '';
+    this.errorMsg.set('');
     this.showForm = true;
   }
 
@@ -142,21 +148,21 @@ export class ProductsComponent implements OnInit {
 
   /** Valida y envía al backend (POST si crea, PATCH si edita). */
   save() {
-    this.errorMsg = '';
+    this.errorMsg.set('');
     if (this.form.name.length < 2) {
-      this.errorMsg = 'El nombre es obligatorio (mín. 2 letras)';
+      this.errorMsg.set('El nombre es obligatorio (mín. 2 letras)');
       return;
     }
     if (this.form.price <= 0) {
-      this.errorMsg = 'El precio debe ser mayor a 0';
+      this.errorMsg.set('El precio debe ser mayor a 0');
       return;
     }
     if (this.form.stock < 0) {
-      this.errorMsg = 'El stock no puede ser negativo';
+      this.errorMsg.set('El stock no puede ser negativo');
       return;
     }
     if (!this.form.categoryId) {
-      this.errorMsg = 'Selecciona una categoría';
+      this.errorMsg.set('Selecciona una categoría');
       return;
     }
 
@@ -174,13 +180,13 @@ export class ProductsComponent implements OnInit {
       ? this.productService.update(id, body)
       : this.productService.create(body);
 
-    req$.subscribe({
+    req$.pipe(takeUntilDestroyed()).subscribe({
       next: () => {
         this.showForm = false;
         this.loadProducts();
       },
       error: (err) => {
-        this.errorMsg = this.msg(err, 'No se pudo guardar el producto');
+        this.errorMsg.set(extractErrorMessage(err, 'No se pudo guardar el producto'));
       },
     });
   }
@@ -188,21 +194,16 @@ export class ProductsComponent implements OnInit {
   /** Pide confirmación y elimina. */
   delete(p: Product) {
     if (!confirm(`¿Eliminar "${p.name}"?`)) return;
-    this.productService.delete(p.id).subscribe({
-      next: () => this.loadProducts(),
-      error: (err) => this.errorMsg = this.msg(err, 'No se pudo eliminar'),
-    });
+    this.productService.delete(p.id)
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: () => this.loadProducts(),
+        error: (err) => this.errorMsg.set(extractErrorMessage(err, 'No se pudo eliminar')),
+      });
   }
 
   /** Cierra el modal sin guardar. */
   cancel() {
     this.showForm = false;
-  }
-
-  /** Extrae un mensaje legible desde un error HTTP de NestJS. */
-  private msg(err: any, fallback: string): string {
-    const m = err?.error?.message;
-    if (Array.isArray(m)) return m.join(', ');
-    return m ?? fallback;
   }
 }

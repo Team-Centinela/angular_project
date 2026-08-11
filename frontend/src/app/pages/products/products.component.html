@@ -1,19 +1,14 @@
 <!--
   Plantilla: products.component.html
   Tabla con productos + modal para crear/editar.
-  Estructura:
-    1. Título y botón Nuevo
-    2. Mensajes (error / loading)
-    3. Tabla de productos
-    4. Modal con formulario (solo cuando showForm === true)
 -->
 
 <h2>Productos</h2>
 
 <button type="button" (click)="openNew()">+ Nuevo producto</button>
 
-@if (errorMsg) {
-  <p class="error">{{ errorMsg }}</p>
+@if (errorMsg()) {
+  <p class="error">{{ errorMsg() }}</p>
 }
 
 @if (loading()) {
