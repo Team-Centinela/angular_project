@@ -1,3 +1,5 @@
+import { Product } from './product';
+
 /**
  * DTOs para el endpoint /products.
  * Coinciden con los `class-validator` del backend en
@@ -31,5 +33,3 @@ export interface ProductListResponse {
   limit: number;
   totalPages: number;
 }
-
-import { Product } from './product';

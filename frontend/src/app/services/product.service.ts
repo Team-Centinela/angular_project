@@ -26,7 +26,7 @@ export class ProductService {
     search?: string,
     categoryId?: string,
     page = 1,
-    limit = 100,
+    limit = 10,
   ): Observable<ProductListResponse> {
     let params = new HttpParams().set('page', page).set('limit', limit);
     if (search) params = params.set('search', search);
