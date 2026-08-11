@@ -1,0 +1,26 @@
+<h2>Mis favoritos</h2>
+
+@if (errorMsg) {
+  <p class="error">{{ errorMsg }}</p>
+}
+
+@if (loading()) {
+  <p class="loading">Cargando favoritos...</p>
+}
+
+<div class="grid">
+  @for (p of favorites(); track p.id) {
+    <div class="card">
+      @if (primeraImagen(p)) {
+        <img [src]="primeraImagen(p)" [alt]="p.name" />
+      } @else {
+        <div class="no-image">Sin imagen</div>
+      }
+      <h3>{{ p.name }}</h3>
+      <p class="price">{{ p.price | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
+      <button type="button" (click)="quitar(p)">Quitar de favoritos</button>
+    </div>
+  } @empty {
+    <p class="empty">Aún no tienes productos favoritos.</p>
+  }
+</div>
