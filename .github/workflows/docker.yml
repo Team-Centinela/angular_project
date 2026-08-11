@@ -1,0 +1,21 @@
+name: Docker validate
+
+on:
+  pull_request:
+    paths:
+      - 'docker-compose.yml'
+      - 'frontend/Dockerfile'
+      - 'backend/Dockerfile'
+      - '.github/workflows/docker.yml'
+
+jobs:
+  validate:
+    name: Validate docker-compose
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate YAML
+        run: python3 -c "import yaml; yaml.safe_load(open('docker-compose.yml')); print('OK')"
+      - name: Validate docker-compose
+        uses: docker/setup-compose-action@v3
+      - run: docker compose config --quiet
