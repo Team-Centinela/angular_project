@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgresql://postgres.mfxrypwaufiqizntskmv:Angular.123**@aws-0-us-east-2.pooler.supabase.com:5432/postgres
+      - JWT_SECRET=equipo-centinela-angular-2024-secreto
+      - JWT_EXPIRES_IN=1d
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
