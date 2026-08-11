@@ -1,0 +1,23 @@
+# CODEOWNERS — review assignments.
+# See docs/git-workflow.md §"Review process" for the full review flow.
+#
+# Frontend code is reviewed by any teammate. The integrator whose code is
+# affected (per the issue tracker) does the review when relevant.
+# SrLampi1001 is the preferred reviewer for governance, CI, and infra changes.
+# Carlos (stakeholder) does not review code.
+
+# Default: any team member can review
+*                       @santiago-diaz @3105jero @SrLampi1001 @SebastianT2006 @juliana-valencia
+
+# Governance, CI, and infrastructure changes — preferred reviewer SrLampi1001
+/AGENTS.md              @SrLampi1001
+/CONTRIBUTING.md        @SrLampi1001
+/README.md              @SrLampi1001
+/.opencode/**           @SrLampi1001
+/docs/**                @SrLampi1001
+/.github/**             @SrLampi1001
+/docker-compose.yml     @SrLampi1001
+
+# Backend subtree — preferred reviewer SrLampi1001 (no active backend devs)
+/backend/.env.example   @SrLampi1001
+/backend/Dockerfile     @SrLampi1001
