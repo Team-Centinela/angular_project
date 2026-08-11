@@ -27,12 +27,7 @@
   } @else {
     <div class="grid">
       @for (p of filteredProducts(); track p.id) {
-        <article class="card">
-          <h3>{{ p.name }}</h3>
-          <p>{{ p.description }}</p>
-          <p class="price">{{ p.price | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
-          <p class="stock">Stock: {{ p.stock }}</p>
-        </article>
+        <app-product-card [product]="p" (productClick)="onProductClick($event)"></app-product-card>
       }
     </div>
   }
