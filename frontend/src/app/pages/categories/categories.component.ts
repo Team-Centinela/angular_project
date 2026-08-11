@@ -15,9 +15,11 @@
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Category } from '../../models/category';
 import { CategoryService } from '../../services/category.service';
+import { extractErrorMessage } from '../../utils/error.util';
 
 @Component({
   selector: 'app-categories',
@@ -31,7 +33,8 @@ export class CategoriesComponent implements OnInit {
 
   categories = signal<Category[]>([]);
   loading = signal(false);
-  errorMsg = '';
+  /** Mensaje de error como signal para consistencia con el resto. */
+  errorMsg = signal('');
   showForm = false;
   editingId: string | null = null;
 
@@ -44,23 +47,25 @@ export class CategoriesComponent implements OnInit {
   /** Pide todas las categorías al backend. */
   loadAll() {
     this.loading.set(true);
-    this.categoryService.getAll().subscribe({
-      next: (cats) => {
-        this.categories.set(cats);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.errorMsg = 'No se pudieron cargar las categorías';
-        this.loading.set(false);
-      },
-    });
+    this.categoryService.getAll()
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (cats) => {
+          this.categories.set(cats);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.errorMsg.set('No se pudieron cargar las categorías');
+          this.loading.set(false);
+        },
+      });
   }
 
   /** Abre el modal en modo CREAR. */
   openNew() {
     this.editingId = null;
     this.form = { name: '', description: '' };
-    this.errorMsg = '';
+    this.errorMsg.set('');
     this.showForm = true;
   }
 
@@ -68,7 +73,7 @@ export class CategoriesComponent implements OnInit {
   openEdit(c: Category) {
     this.editingId = c.id;
     this.form = { name: c.name, description: c.description ?? '' };
-    this.errorMsg = '';
+    this.errorMsg.set('');
     this.showForm = true;
   }
 
@@ -79,9 +84,9 @@ export class CategoriesComponent implements OnInit {
 
   /** Valida y envía al backend. */
   save() {
-    this.errorMsg = '';
+    this.errorMsg.set('');
     if (this.form.name.length < 2) {
-      this.errorMsg = 'El nombre es obligatorio (mín. 2 letras)';
+      this.errorMsg.set('El nombre es obligatorio (mín. 2 letras)');
       return;
     }
     const body = {
@@ -92,28 +97,25 @@ export class CategoriesComponent implements OnInit {
     const req$ = id
       ? this.categoryService.update(id, body)
       : this.categoryService.create(body);
-    req$.subscribe({
+    req$.pipe(takeUntilDestroyed()).subscribe({
       next: () => {
         this.showForm = false;
         this.loadAll();
       },
-      error: (err) => this.errorMsg = this.msg(err, 'No se pudo guardar la categoría'),
+      error: (err) =>
+        this.errorMsg.set(extractErrorMessage(err, 'No se pudo guardar la categoría')),
     });
   }
 
   /** Pide confirmación y elimina. Si tiene productos asociados → 409. */
   delete(c: Category) {
     if (!confirm(`¿Eliminar "${c.name}"?`)) return;
-    this.categoryService.delete(c.id).subscribe({
-      next: () => this.loadAll(),
-      error: (err) => this.errorMsg = this.msg(err, 'No se pudo eliminar la categoría'),
-    });
-  }
-
-  /** Extrae un mensaje legible desde un error HTTP de NestJS. */
-  private msg(err: any, fallback: string): string {
-    const m = err?.error?.message;
-    if (Array.isArray(m)) return m.join(', ');
-    return m ?? fallback;
+    this.categoryService.delete(c.id)
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: () => this.loadAll(),
+        error: (err) =>
+          this.errorMsg.set(extractErrorMessage(err, 'No se pudo eliminar la categoría')),
+      });
   }
 }

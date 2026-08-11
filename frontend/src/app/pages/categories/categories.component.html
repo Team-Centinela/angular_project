@@ -7,8 +7,8 @@
 
 <button type="button" (click)="openNew()">+ Nueva categoría</button>
 
-@if (errorMsg) {
-  <p class="error">{{ errorMsg }}</p>
+@if (errorMsg()) {
+  <p class="error">{{ errorMsg() }}</p>
 }
 
 @if (loading()) {
