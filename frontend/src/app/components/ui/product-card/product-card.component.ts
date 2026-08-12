@@ -1,20 +1,19 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, input, output } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 import { Product } from '../../../models/product';
 
 @Component({
   selector: 'app-product-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CurrencyPipe],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.scss'
 })
 export class ProductCardComponent {
-  @Input() product!: Product;
+  readonly product = input.required<Product>();
+  readonly productClick = output<string>();
 
-  @Output() productClick = new EventEmitter<string>();
-
-  onClick() {
-    this.productClick.emit(this.product.id);
+  onClick(): void {
+    this.productClick.emit(this.product().id);
   }
 }
