@@ -1,4 +1,5 @@
 import { Component, effect, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Product } from '../../models/product';
@@ -6,6 +7,7 @@ import { Category } from '../../models/category';
 import { ProductService } from '../../services/product.service';
 import { CategoryService } from '../../services/category.service';
 import { ProductCardComponent } from '../../components/ui/product-card/product-card.component';
+import { extractErrorMessage } from '../../utils/error.util';
 
 @Component({
   selector: 'app-home',
@@ -40,25 +42,34 @@ export class HomeComponent {
   }
 
   private loadCategories(): void {
-    this.categoryService.getAll().subscribe({
-      next: (cats) => this.categories.set(cats),
-      error: () => this.categories.set([])
-    });
+    this.categoryService
+      .getAll()
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (cats) => this.categories.set(cats),
+        error: (err) => {
+          this.errorMessage.set(extractErrorMessage(err, 'No se pudieron cargar las categorías'));
+          this.categories.set([]);
+        }
+      });
   }
 
   private loadProducts(search: string, categoryId: string): void {
     this.loading.set(true);
     this.errorMessage.set(null);
-    this.productService.getAll(search || undefined, categoryId || undefined).subscribe({
-      next: (response) => {
-        this.products.set(response.data);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.errorMessage.set('No se pudieron cargar los productos. Intenta de nuevo.');
-        this.products.set([]);
-        this.loading.set(false);
-      }
-    });
+    this.productService
+      .getAll(search || undefined, categoryId || undefined)
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (response) => {
+          this.products.set(response.data);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          this.errorMessage.set(extractErrorMessage(err, 'No se pudieron cargar los productos. Intenta de nuevo.'));
+          this.products.set([]);
+          this.loading.set(false);
+        }
+      });
   }
 }
