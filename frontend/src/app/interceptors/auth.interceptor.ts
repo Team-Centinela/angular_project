@@ -1,9 +1,11 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { safeReturnUrl } from '../utils/safe-return-url';
+
+const NO_REDIRECT_ON_401: readonly string[] = ['/login', '/register'];
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
@@ -15,11 +17,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     : req;
 
   return next(authReq).pipe(
-    catchError((err) => {
-      if (err.status === 401) {
+    catchError((err: HttpErrorResponse) => {
+      if (err.status === 401 && !NO_REDIRECT_ON_401.includes(router.url)) {
         auth.clearSession();
-        const returnUrl = safeReturnUrl(router.url);
-        router.navigate(['/login'], { queryParams: { returnUrl } });
+        router.navigate(['/login'], {
+          queryParams: { returnUrl: safeReturnUrl(router.url) },
+        });
       }
       return throwError(() => err);
     }),
