@@ -71,7 +71,7 @@ The classroom spec (`gistfile1.md`) specifies Angular 22. The code was scaffolde
 |--------|---------|--------|
 | `@angular/core` | 18.2.0 | 22.x |
 | `@angular/cli` | 18.2.21 | 22.x |
-| `node:20-alpine` base | ✓ | ✓ (only bump if Angular 22 requires it) |
+| `node:22-alpine` base (CI; Dockerfiles still on 20) | ✓ | ✓ (only bump if Angular 22 requires it) |
 | `@angular-eslint` | not configured | set up in this PR |
 | `rxjs` | 7.8.0 | keep ≤ 22-compatible |
 | `zone.js` | 0.14.10 | migrate to zoneless if 22 deprecates |
@@ -80,7 +80,7 @@ The classroom spec (`gistfile1.md`) specifies Angular 22. The code was scaffolde
 
 1. `ng update @angular/core@22 @angular/cli@22` from a fresh branch off `develop`.
 2. Address breaking changes (to be enumerated when the bump is run).
-3. Bump `frontend/Dockerfile` `node:20-alpine` if required by Angular 22.
+3. Bump `frontend/Dockerfile` `node:22-alpine` (or what Angular 22 requires) and reconcile with CI.
 4. Run lint + build + (if any) tests in CI.
 5. After successful merge, remove the "Migration plan" section from this file and update `README.md` and `backlog.md` to reflect Angular 22.
 
@@ -103,7 +103,7 @@ The classroom spec (`gistfile1.md`) specifies Angular 22. The code was scaffolde
 | 2026-08-11 | Governance docs live in `docs/` (root), not `.opencode/docs/` — see issue #48 comment thread | `AGENTS.md` governance hierarchy |
 | 2026-08-11 | Topic docs (not ADR-style) for governance in this sprint | `AGENTS.md` governance hierarchy |
 | 2026-08-11 | **PROPOSED** (awaiting stakeholder review): when a CI lint gate surfaces pre-existing issues in untouched `backend/` subtree code, surgical fixes (≤1 line per file: type annotations, `void` prefixes, targeted `eslint-disable` with justification) are permitted so the new gate can turn green. This is consistent with `docs/git-workflow.md` §"Working with backend subtree" — minimal diffs to keep subtree pulls clean are already allowed, and CI-lint compliance is in the same category. Non-surgical refactors of unrelated backend files remain forbidden. | This file, this row |
-| 2026-08-12 | **ACCEPTED** — Migration was accepted and Architecture is sound, ARCHITECTURE.md may change after new Angular 22 skill is added later, but currently it's accepted to work on current sprint | This file, this row |
+| 2026-08-12 | **ACCEPTED** — Migration was accepted and Architecture is sound, ARCHITECTURE.md may change after new Angular 22 skill is added later, but currently it's accepted to work on current sprint. Explicit acceptance recorded by SrLampi1001 (incident-response reviewer per `docs/git-workflow.md` §"Review process") on PR #73 review thread. Carlos is the assignment stakeholder, not the architecture-decision stakeholder (per `AGENTS.md`). | This file, this row |
 
 ## Pending follow-ups
 
