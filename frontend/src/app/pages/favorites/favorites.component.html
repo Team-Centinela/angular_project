@@ -1,0 +1,27 @@
+<!--
+  Plantilla: favorites.component.html
+  Grid de ProductCard con botón "Quitar" en cada una.
+-->
+
+<h2>Mis favoritos</h2>
+
+@if (errorMsg()) {
+  <p class="error">{{ errorMsg() }}</p>
+}
+
+@if (loading()) {
+  <p class="loading">Cargando favoritos...</p>
+}
+
+<div class="grid">
+  @for (p of favorites(); track p.id) {
+    <div class="card-wrapper">
+      <app-product-card [product]="p" />
+      <button type="button" class="remove" (click)="quitar(p)">
+        Quitar de favoritos
+      </button>
+    </div>
+  } @empty {
+    <p class="empty">Aún no tienes productos favoritos.</p>
+  }
+</div>
