@@ -19,24 +19,10 @@ se necesita revisar, revertir o extender el trabajo.
 |------|---------|----------|--------------|
 | 1 | Primer intento | Crear archivos en `main` (que estaba atrás de `develop`); 6 branches + 6 merges a `main`; 6 PRs contra `develop` | **Revertido** |
 | 2 | Limpieza | Cerrar PRs, borrar branches (local y remoto), resetear `main` y `develop` a sus versiones remotas, soltar el stash | **Hecho** |
-| 3 | Reintento adaptado | Pull de `develop`, identificación de convenciones del equipo (DTOs en `*.dto.ts`, sufijo `.component.ts`, `string` para fechas), nueva implementación de #25 | **En curso** |
-| 4 | Pendiente | #30, #16, #17, #18, #19 — uno por uno según las indicaciones del equipo | **Pendiente** |
-
-Diagrama simplificado del flujo:
-
-```
-main ─┬─► feat/issue-25 ─┐
-      ├─► feat/issue-30 ─┤   (FASE 1: descartado)
-      ├─► feat/issue-16 ─┤
-      ├─► feat/issue-17 ─┤
-      ├─► feat/issue-18 ─┤
-      └─► feat/issue-19 ─┘
-                       │
-                       └───► git reset --hard origin/main  (FASE 2)
-
-develop ─► feat/issue-25 ──► PR #45  (FASE 3, en curso)
-       └─► docs/traceability ──► PR (FASE 3, este archivo)
-```
+| 3 | Reintento adaptado | Pull de `develop`, identificación de convenciones del equipo (DTOs en `*.dto.ts`, sufijo `.component.ts`, `string` para fechas), nueva implementación de #25 | **Mergeado** |
+| 4 | Servicios #25/#30 + páginas #16/#17 | Reviews de @SrLampi1001, fix de limit, Favorite model, takeUntilDestroyed, helper compartido, mini-PR #55 con provideHttpClient | **Mergeado** |
+| 5 | Rebase + nuevas páginas | Equipo mergea mis 5 PRs; yo rebaseo todo sobre nuevo develop y agrego Favorites (#18) reusando ProductCard | **#18 mergeado, #19 pendiente** |
+| 6 | Pendiente | #19 (Profile page) | **Por hacer** |
 
 ---
 
@@ -90,7 +76,7 @@ un commit de feature y un commit de merge. Resumen:
    del integrante-1, etc.).
 2. **Conflictos de naming:**
    - Yo usé `models/product.model.ts`, pero el equipo ya tiene
-     `models/product.ts`.
+     `models/product.ts` (creado por integrante-1).
    - Yo usé `pages/products/products.page.ts`, pero Sebastian usa
      `home.component.ts`.
    - Las fechas en mis interfaces eran `Date`, en las del equipo eran
@@ -136,7 +122,7 @@ sin PRs abiertos del usuario, sin ramas locales ni remotas propias.
 
 ---
 
-## FASE 3 — Reintento adaptado
+## FASE 3 — Reintento adaptado (mergeado)
 
 ### Inspección de `develop` (precommit)
 
@@ -165,7 +151,7 @@ frontend/
 
 ### Convenciones identificadas
 
-| Decisión | Conven Adoptada | Razón |
+| Decisión | Convención adoptada | Razón |
 |---|---|---|
 | Sufijo de modelos | `models/<name>.ts` | El equipo ya tiene `product.ts`, `category.ts`, `user.ts` |
 | Mapeo de fechas | `string` para `createdAt`/`updatedAt` | Definido por integrante-1 en `models/product.ts` |
@@ -178,83 +164,168 @@ frontend/
 
 ---
 
-### Commit `04fc996` — PR #45 — Issue #25
+### Commits mergeados de la FASE 3
 
-**Branch:** `feat/issue-25-services-product-category` (basada en `develop`)
-**Aplicable a:** #25
-
-**Qué hice:** Creé los dos servicios HTTP que encapsulan el consumo de
-`/products` y `/categories` desde la API NestJS, junto con los DTOs que
-necesitan en archivos separados.
-
-**Por qué:** Es el primer eslabón de la cadena. Las páginas #16, #17, #18,
-#19 necesitan estos servicios para hablar con el backend. Mantener DTOs en
-archivos `*.dto.ts` evita modificar los modelos del equipo (regla de oro:
-no toco código ajeno si no es estrictamente necesario).
-
-**Cómo:**
-
-1. **DTOs primero** — Defino las interfaces en `models/product.dto.ts` y
-   `models/category.dto.ts`. Cada DTO coincide 1-a-1 con el `class-validator`
-   del backend:
-   - `CreateProductDto`: campos obligatorios según
-     `backend/src/modules/products/dto/create-product.dto.ts`.
-   - `UpdateProductDto`: todos los campos opcionales (PartialType).
-   - `ProductListResponse`: respuesta paginada `{ data, total, page, limit, totalPages }`
-     que devuelve `ProductsService.findAll()`.
-   - `CreateCategoryDto` / `UpdateCategoryDto`: análogo para categorías.
-
-   Los DTOs están **separados** de los modelos del equipo
-   (`models/product.ts`) precisamente porque estos últimos ya existen y no
-   queremos modificarlos sin coordinación.
-
-2. **`ProductService`** con cinco métodos:
-   - `getAll(search?, categoryId?, page, limit)` → arma `HttpParams`
-     solo si los filtros tienen valor (evita `?search=` vacío).
-   - `getOne(id)` → `GET /products/:id`.
-   - `create(dto)` → `POST /products` (requiere JWT, lo añade el
-     interceptor #29 automáticamente).
-   - `update(id, dto)` → `PATCH /products/:id`.
-   - `delete(id)` → `DELETE /products/:id` (responde 204).
-
-   Decisiones técnicas:
-   - `inject(HttpClient)` en vez de constructor injection (Angular moderno).
-   - `providedIn: 'root'` para que sea singleton sin declararlo en
-     `app.config.ts`.
-   - Devuelve `Observable<T>` (encaja con interceptors futuros).
-   - URL base literal: si el proxy (`proxy.conf.json`, ya en develop) se
-     activa, se cambia `base` a `/api/products` y nada más.
-
-3. **`CategoryService`** con la misma forma, sin paginación (categorías son
-   pocas y el backend devuelve la lista completa ordenada alfabéticamente).
-
-4. **Commit** con Conventional Commits + `Closes #25` para que GitHub
-   cierre la issue automáticamente al mergear el PR.
-
-**Archivos tocados:**
-
-```
-A  frontend/src/app/models/product.dto.ts
-A  frontend/src/app/models/category.dto.ts
-A  frontend/src/app/services/product.service.ts
-A  frontend/src/app/services/category.service.ts
-```
+| Commit | PR | Issue | Archivos | Estado |
+|--------|----|----|----------|--------|
+| `04fc996` | #45 | #25 | `models/{product,category}.dto.ts`, `services/{product,category}.service.ts` | ✅ Mergeado (`f2aa83b`) |
+| `0785996` | #51 | #30 | `models/user.dto.ts`, `services/{favorites,user}.service.ts` | ✅ Mergeado (`4e12943`) |
+| `28f9ecf` | #53 | #16, #32 | `pages/products/products.component.{ts,html,css}` | ✅ Mergeado (`85cbb5f`) |
+| `429457d` | #54 | #17, #33 | `pages/categories/categories.component.{ts,html,css}` | ✅ Mergeado (`318d451`) |
+| `bcec36a` | #49 | — (docs) | `docs/traceability.md` | ✅ Mergeado (`b4d330a`) |
 
 ---
 
-## FASE 4 — Pendiente
+## FASE 4 — Reviews de @SrLampi1001 y fixes (mergeado)
 
-| Orden | Issue | Trabajo | Estado |
-|------|-------|---------|--------|
-| 1 | #25 | services product/category | ✅ Commit `04fc996`, PR #45 abierto |
-| 2 | #30 | services favorites/user | ⏳ Pendiente |
-| 3 | #16, #32 | Products CRUD page | ⏳ Pendiente |
-| 4 | #17, #33 | Categories CRUD page | ⏳ Pendiente |
-| 5 | #18 | Favorites page | ⏳ Pendiente |
-| 6 | #19 | Profile page | ⏳ Pendiente |
+El reviewer @SrLampi1001 hizo blocking comments en todos los PRs de
+código. Un solo blocker compartido destrababa los 4 PRs: **faltaba
+`provideHttpClient()` en `app.config.ts`**, sin lo cual `inject(HttpClient)`
+fallaba con `NullInjectorError` en runtime.
 
-Cada paso generará un commit + PR nuevo contra `develop`. El usuario
-indicará cuándo continuar con el siguiente.
+### Commits de fix
+
+| Commit | PR | Cambios |
+|--------|----|---------|
+| `4b28050` | #55 (nuevo mini-PR) | `app.config.ts`: agregar `provideHttpClient()` |
+| `23e16d1` | #45 | `limit = 100` → `limit = 10`; `import { Product }` al top |
+| `d7ee5b7` | #51 | `add()` ahora devuelve `Observable<Favorite>`; nueva `models/favorite.ts` |
+| `fdf212a` | #53 | `errorMsg` a `signal('')`; `takeUntilDestroyed()`; helper `extractErrorMessage`; `loadProducts` con `limit=1000` |
+| `7d44931` | #54 | `errorMsg` a signal; `takeUntilDestroyed()`; helper compartido |
+
+### PR #55 (mini-PR)
+
+Es un PR de una sola línea que agrega el provider de HttpClient al
+`app.config.ts`. Se mergeó al final de la FASE 4 para destrabar los
+otros 4 PRs.
+
+**Estado final:** el equipo terminó mergeando `provideHttpClient()`
+directamente con un commit dedicado (`ba88ab5`), cerrando el círculo
+pero dejando a mi PR #55 mergeado también (con el mismo cambio duplicado
+en el merge commit final).
+
+---
+
+## FASE 5 — Rebase + página Favorites (#18) (en curso)
+
+### Descubrimiento clave
+
+El equipo mergea mis 5 PRs en un orden específico:
+
+```
+ba88ab5 chore(app): add provideHttpClient() — #55
+8ec1b64 chore: apply review feedback to ProductCard and Home
+18458a2 fix: remove planeacion.md and trazabilidad.md from repo
+f2aa83b feat(services): ProductService and CategoryService (#25) (#45)
+4e12943 feat(services): FavoritesService and UserService (#30) (#51)
+b4d330a docs(traceability): add complete work log for integrante-5 sprint (#49)
+85cbb5f feat(pages): Products CRUD page (#16, #32) (#53)
+318d451 feat(pages): Categories CRUD page (#17, #33) (#54)
+4558c53 feat(auth): implement AuthService (#15)
+```
+
+Después de esos merges, mi rama base de develop (en la que se apoyaban
+los 5 PRs viejos) quedaba atrasada. @SrLampi1001 me da la instrucción
+explícita de rebasear.
+
+### Rebase de los 5 PRs (commits nuevos)
+
+Cada uno se rebasa contra `origin/develop` con `git rebase origin/develop`
++ `git push --force-with-lease`. **No hubo conflictos** porque mis PRs
+tocaban archivos distintos a los del equipo:
+
+| PR | Branch | HEAD nuevo | Fix extra |
+|----|--------|------------|-----------|
+| #45 | `feat/issue-25-services-product-category` | `5acfeac` | mover `import { Category }` al top de `category.dto.ts` (solo se había hecho en `product.dto.ts`) |
+| #51 | `feat/issue-30-services-favorites-user` | `f942008` | — |
+| #53 | `feat/issue-16-products-page` | `c0527e8` | agregar `takeUntilDestroyed()` a `loadProducts()` (faltaba esa, el resto sí lo tenía) |
+| #54 | `feat/issue-17-categories-page` | `12fa782` | — |
+| #49 | `docs/traceability` | `cafed02` | — |
+
+### Commit `5303e9b` — #18 Favorites page (PR #68, aún no mergeado)
+
+**Branch:** `feat/issue-18-favorites-page` (basada en `develop` post-merge)
+**PR:** #68
+**Issue:** #18
+
+**Qué hice:** Componente standalone que lista los productos favoritos del
+usuario autenticado y permite quitarlos.
+
+**Por qué:**
+
+- A diferencia de la FASE 1 (donde dibujaba una tarjeta inline), ahora
+  **reusa el `ProductCardComponent` de Sebastian** (#10) que ya está
+  mergeado en `components/ui/product-card/`. Esto cumple el spec
+  ("Debe reutilizar el mismo componente de tarjeta de producto usado en Home").
+- El botón "Quitar" está separado del card para no confundirlo con la
+  navegación al detalle.
+- Patrón consistente con Products/Categories: `signal()`, `takeUntilDestroyed()`,
+  `extractErrorMessage()`, CSS Grid responsivo.
+
+**Cómo:**
+
+```ts
+// Importa ProductCardComponent
+imports: [CommonModule, ProductCardComponent]
+
+// Carga
+this.favoritesService.getAll().pipe(takeUntilDestroyed()).subscribe(...)
+
+// Quitar
+this.favoritesService.remove(p.id).pipe(takeUntilDestroyed()).subscribe(
+  next: () => this.load(),
+  error: (err) => this.errorMsg.set(extractErrorMessage(err, '...')),
+)
+```
+
+**Archivos:**
+
+- `frontend/src/app/pages/favorites/favorites.component.ts`
+- `frontend/src/app/pages/favorites/favorites.component.html`
+- `frontend/src/app/pages/favorites/favorites.component.css`
+
+---
+
+## FASE 6 — Pendiente
+
+| Issue | Estado | Trabajo |
+|-------|--------|---------|
+| **#19** Profile page | ⏳ Pendiente | Crear `pages/profile/profile.component.{ts,html,css}` con UserService + AuthService |
+
+---
+
+## Hallazgo: "Cierra" vs "Closes" en GitHub
+
+**Bug que descubrimos y NO afecta al código, pero sí al tracking de issues:**
+
+En los PRs originales usé "Cierra #XX" (español) en los bodies esperando
+que GitHub auto-cerrara las issues al mergear. **No funciona** — GitHub
+solo reconoce keywords en inglés: `Closes`, `Fixes`, `Resolves`.
+
+**Consecuencia:** aunque los 5 PRs viejos están mergeados, las issues
+#25, #30, #16, #17, #32, #33 siguen **OPEN** en GitHub porque la
+keyword no fue reconocida.
+
+**Solución adoptada:** las cerré manualmente con `gh issue close` y un
+comentario referenciando el commit de merge. (Detalle de los cierres
+más abajo en la línea de tiempo.)
+
+**Lección:** usar siempre `Closes #XX` en inglés en PR titles/bodies.
+
+---
+
+## Estado final de las issues de integrante-5
+
+| Issue | Título | Estado | Cerrada por |
+|-------|--------|--------|-------------|
+| #16 | Crear página Products (CRUD) | ✅ CLOSED | merge de PR #53 |
+| #17 | Crear página Categories (CRUD) | ✅ CLOSED | merge de PR #54 |
+| #18 | Crear página Favorites | 🟡 OPEN (PR #68 pendiente) | |
+| #19 | Crear página Profile | ⏳ OPEN (sin PR) | |
+| #25 | Crear servicios ProductService y CategoryService | ✅ CLOSED | merge de PR #45 |
+| #30 | Crear servicios FavoritesService y UserService | ✅ CLOSED | merge de PR #51 |
+| #32 | Implementar CRUD de Products | ✅ CLOSED | merge de PR #53 |
+| #33 | Implementar CRUD de Categories | ✅ CLOSED | merge de PR #54 |
 
 ---
 
@@ -279,6 +350,9 @@ Para que cualquiera que extienda estos services sepa qué hay detrás:
 | FavoritesService | `/favorites` | DELETE | `/:productId` | JWT | Responde 204; 404 si no estaba |
 | UserService | `/users/me` | GET | `/` | JWT | Devuelve `User` sin password |
 | UserService | `/users/me/password` | PATCH | `/` | JWT | `ChangePasswordDto`; 401 si current mal |
+| AuthService | `/auth` | POST | `/login` | público | Devuelve `AuthResponse { accessToken, user }` |
+| AuthService | `/auth` | POST | `/register` | público | Devuelve `AuthResponse` |
+| AuthService | `/auth` | POST | `/logout` | JWT | `LogoutResponse { message }` |
 
 Códigos de error que NestJS puede devolver y que estos services deben
 manejar en la UI:
