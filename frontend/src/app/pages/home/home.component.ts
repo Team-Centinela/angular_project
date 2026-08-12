@@ -29,13 +29,19 @@ export class HomeComponent {
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
 
+  /** Debounce window for search/category changes, in milliseconds. */
+  private static readonly SEARCH_DEBOUNCE_MS = 300;
+
   constructor() {
     this.loadCategories();
 
-    effect(() => {
+    effect((onCleanup) => {
       const search = this.searchText();
       const categoryId = this.selectedCategory();
-      this.loadProducts(search, categoryId);
+      const timer = setTimeout(() => {
+        this.loadProducts(search, categoryId);
+      }, HomeComponent.SEARCH_DEBOUNCE_MS);
+      onCleanup(() => clearTimeout(timer));
     }, { allowSignalWrites: true });
   }
 
