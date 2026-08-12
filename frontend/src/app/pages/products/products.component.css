@@ -13,8 +13,13 @@ button {
   background: #f4f4f4;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   background: #e0e0e0;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .error {
@@ -49,6 +54,39 @@ th {
   text-align: center;
   color: #777;
 }
+
+/* ---------- Paginación (issue #59) ---------- */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.pagination .info {
+  margin: 0 0.5rem;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.pagination .size {
+  margin-left: auto;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.pagination .size select {
+  padding: 0.25rem 0.4rem;
+  border: 1px solid #888;
+  border-radius: 4px;
+  background: #fff;
+}
+
+/* ---------- Modal ---------- */
 
 .modal {
   position: fixed;
