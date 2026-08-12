@@ -1,17 +1,50 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { extractErrorMessage } from '../../utils/error.util';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
-  template: `
-    <div class="container py-4">
-      <h1>Iniciar Sesion</h1>
-      <p>Formulario de login</p>
-    </div>
-  `
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
 })
-export class LoginComponent {}
+export class LoginComponent {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  email = '';
+  password = '';
+  loading = signal(false);
+  errorMsg = signal('');
+
+  submit() {
+    this.errorMsg.set('');
+    if (!this.email.trim() || !this.password) {
+      this.errorMsg.set('Email y contraseña son obligatorios');
+      return;
+    }
+
+    this.loading.set(true);
+    this.authService
+      .login({ email: this.email.trim(), password: this.password })
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: () => {
+          this.loading.set(false);
+          const raw = this.route.snapshot.queryParamMap.get('returnUrl');
+          const safe = raw && /^\/(?!\/)/.test(raw) ? raw : '/';
+          this.router.navigateByUrl(safe);
+        },
+        error: (err) => {
+          this.loading.set(false);
+          this.errorMsg.set(extractErrorMessage(err, 'No se pudo iniciar sesión'));
+        },
+      });
+  }
+}
