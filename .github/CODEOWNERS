@@ -6,7 +6,7 @@
 # Carlos (stakeholder) does not review code.
 
 # Default: any team member can review
-*                       @santiago-diaz @3105jero @SrLampi1001 @SebastianT2006 @juliana-valencia
+*                       @Santiagodxz @3105jero @SrLampi1001 @SebastianT2006 @juliiii09
 
 # Governance, CI, and infrastructure changes — preferred reviewer SrLampi1001
 /AGENTS.md              @SrLampi1001
