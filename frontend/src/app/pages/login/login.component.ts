@@ -37,8 +37,9 @@ export class LoginComponent {
       .subscribe({
         next: () => {
           this.loading.set(false);
-          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/';
-          this.router.navigateByUrl(returnUrl);
+          const raw = this.route.snapshot.queryParamMap.get('returnUrl');
+          const safe = raw && /^\/(?!\/)/.test(raw) ? raw : '/';
+          this.router.navigateByUrl(safe);
         },
         error: (err) => {
           this.loading.set(false);
