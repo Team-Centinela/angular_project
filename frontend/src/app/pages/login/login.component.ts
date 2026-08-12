@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { extractErrorMessage } from '../../utils/error.util';
+import { safeReturnUrl } from '../../utils/safe-return-url';
 
 @Component({
   selector: 'app-login',
@@ -37,8 +38,7 @@ export class LoginComponent {
       .subscribe({
         next: () => {
           this.loading.set(false);
-          const raw = this.route.snapshot.queryParamMap.get('returnUrl');
-          const safe = raw && /^\/(?!\/)/.test(raw) ? raw : '/';
+          const safe = safeReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl'));
           this.router.navigateByUrl(safe);
         },
         error: (err) => {
