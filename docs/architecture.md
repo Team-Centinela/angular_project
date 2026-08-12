@@ -43,6 +43,7 @@ Per `docs/TECH_REQUIREMENTS.md`. The team is currently converging on this; small
 - **Control flow:** `@if` / `@for` (with `track`) / `@switch`. No `*ngIf` / `*ngFor`.
 - **Naming:** pages under `pages/<name>/<name>.page.{ts,html,css}`. Routed components use `.page.ts` suffix.
 - **DTOs:** separate from `models/*.ts` files. Use `models/<name>.dto.ts` to avoid editing the team's shared models.
+- **I/O:** use `input()` / `output()` (signal-based, Angular 17.1+/18) for **new** component I/O. Existing `@Input` / `@Output` decorator-based components are grandfathered; convert them opportunistically (typically when the component is touched for other reasons). Parents read the same `[input]` / `(output)` property bindings — signal-based I/O is API-compatible from the consumer's perspective.
 
 ### HTTP
 
