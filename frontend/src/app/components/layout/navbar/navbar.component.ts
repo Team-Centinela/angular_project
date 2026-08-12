@@ -1,35 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink],
-  template: `
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container">
-        <a class="navbar-brand" routerLink="/">Gestión de Productos</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/">Inicio</a>
-            </li>
-          </ul>
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/login">Iniciar Sesión</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/register">Registrarse</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-  `,
-  styles: []
+  imports: [CommonModule, RouterLink],
+  templateUrl: './navbar.component.html',
+  styleUrl: './navbar.component.scss',
 })
-export class NavbarComponent {}
+export class NavbarComponent {
+  private authService = inject(AuthService);
+
+  isAuthenticated$ = this.authService.isAuthenticated$;
+
+  get userName(): string | null {
+    return this.authService.getUser()?.name ?? null;
+  }
+
+  logout() {
+    this.authService.logout().subscribe();
+  }
+}
