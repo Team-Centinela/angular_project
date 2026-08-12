@@ -7,12 +7,13 @@ import { Category } from '../../models/category';
 import { ProductService } from '../../services/product.service';
 import { CategoryService } from '../../services/category.service';
 import { ProductCardComponent } from '../../components/ui/product-card/product-card.component';
+import { SearchBarComponent } from '../../components/ui/search-bar/search-bar.component';
 import { extractErrorMessage } from '../../utils/error.util';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductCardComponent],
+  imports: [CommonModule, FormsModule, ProductCardComponent, SearchBarComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
