@@ -14,8 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Validate YAML
-        run: python3 -c "import yaml; yaml.safe_load(open('docker-compose.yml')); print('OK')"
       - name: Prepare .env from template
         run: cp backend/.env.example backend/.env
       - name: Validate docker-compose
