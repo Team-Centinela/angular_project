@@ -1,5 +1,3 @@
-import { Category } from './category';
-
 /**
  * DTOs para el endpoint /categories.
  * Coinciden con los `class-validator` del backend en
