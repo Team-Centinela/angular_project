@@ -2,12 +2,10 @@
   <h1>Productos</h1>
 
   <div class="filters">
-    <input
-      type="text"
-      placeholder="Buscar productos..."
-      [ngModel]="searchText()"
-      (ngModelChange)="searchText.set($event)"
-    />
+    <app-search-bar
+      [value]="searchText()"
+      (search)="searchText.set($event)"
+    ></app-search-bar>
 
     <select
       [ngModel]="selectedCategory()"

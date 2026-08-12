@@ -12,15 +12,12 @@
   margin-bottom: 1rem;
   flex-wrap: wrap;
 
-  input,
   select {
     padding: 0.5rem;
     font-size: 1rem;
     border: 1px solid #ccc;
     border-radius: 4px;
   }
-
-  input { flex: 1; min-width: 200px; }
 }
 
 .loading,
