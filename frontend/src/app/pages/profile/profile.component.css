@@ -1,0 +1,70 @@
+/* Estilos: profile.component.css */
+
+h2, h3 {
+  margin: 1rem 0 0.5rem;
+}
+
+.error {
+  color: #b00020;
+  background: #ffe6e6;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.success {
+  color: #0a6b1e;
+  background: #e6ffe6;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.loading {
+  color: #555;
+  font-style: italic;
+}
+
+.profile-info {
+  background: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  max-width: 480px;
+}
+
+.profile-info p {
+  margin: 0.3rem 0;
+}
+
+form {
+  max-width: 420px;
+}
+
+label {
+  display: block;
+  margin-top: 0.8rem;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 0.4rem;
+  margin-top: 0.2rem;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+button[type="submit"] {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #1976d2;
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background: #125aa0;
+}
