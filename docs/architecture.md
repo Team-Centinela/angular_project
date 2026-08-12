@@ -102,6 +102,8 @@ The classroom spec (`gistfile1.md`) specifies Angular 22. The code was scaffolde
 | 2026-08-11 | Angular 22 is the target; we ship at 18.2.0 as a transitional state, migrate after current PRs close | this file, "Migration plan" |
 | 2026-08-11 | Governance docs live in `docs/` (root), not `.opencode/docs/` — see issue #48 comment thread | `AGENTS.md` governance hierarchy |
 | 2026-08-11 | Topic docs (not ADR-style) for governance in this sprint | `AGENTS.md` governance hierarchy |
+| 2026-08-11 | **PROPOSED** (awaiting stakeholder review): when a CI lint gate surfaces pre-existing issues in untouched `backend/` subtree code, surgical fixes (≤1 line per file: type annotations, `void` prefixes, targeted `eslint-disable` with justification) are permitted so the new gate can turn green. This is consistent with `docs/git-workflow.md` §"Working with backend subtree" — minimal diffs to keep subtree pulls clean are already allowed, and CI-lint compliance is in the same category. Non-surgical refactors of unrelated backend files remain forbidden. | This file, this row |
+| 2026-08-12 | **ACCEPTED** — Migration was accepted and Architecture is sound, ARCHITECTURE.md may change after new Angular 22 skill is added later, but currently it's accepted to work on current sprint | This file, this row |
 
 ## Pending follow-ups
 
