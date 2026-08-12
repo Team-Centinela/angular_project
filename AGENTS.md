@@ -4,7 +4,7 @@
 
 ## What this project is
 
-Fullstack product-management application: Angular frontend, NestJS backend (git subtree from `gestion-de-productos`), PostgreSQL via Supabase, Docker orchestration. One-week sprint, 5 frontend developers, 1 stakeholder.
+Fullstack product-management application: Angular frontend, NestJS backend (git subtree from `gestion-de-productos`), PostgreSQL via Supabase, Docker orchestration. One-week sprint, 5 frontend developers. No external review — team self-governs; the deliverable is presented at sprint end.
 
 **Stack target (per `gistfile1.md`):** Angular 22. **Current code:** Angular 18.2.0 — migration is planned after currently active PRs close. See `docs/architecture.md` for the migration plan and the rationale for treating the drift as planned, not accidental.
 
@@ -49,7 +49,7 @@ If a change sets precedent, the skill requires a record of the decision — typi
 - Don't add stories to `backlog.md` outside the current sprint scope.
 - Don't introduce a new dependency without justifying it (per the decision-compliance skill, that's a precedent).
 - Don't mark a decision record as `ACCEPTED` without explicit user approval.
-- Don't refactor the README's role table — Carlos is the **stakeholder**, not a code reviewer. (Drift noted, not fixed in this PR.)
+- Don't refactor the README's role table — team roles are human-facing information, not governance. The team self-governs for code and architecture decisions.
 
 ## When you don't know
 
