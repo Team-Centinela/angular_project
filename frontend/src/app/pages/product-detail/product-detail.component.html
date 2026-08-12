@@ -1,0 +1,37 @@
+<div class="product-detail container py-4">
+  <a routerLink="/" class="back-link">&larr; Volver al inicio</a>
+
+  @if (loading()) {
+    <p class="loading">Cargando producto...</p>
+  } @else if (errorMsg()) {
+    <p class="error">{{ errorMsg() }}</p>
+  } @else if (product()) {
+    <h1>{{ product()!.name }}</h1>
+
+    <div class="detail-grid">
+      <div class="images">
+        @if (product()!.images && product()!.images.length > 0) {
+          @for (img of product()!.images; track img.id) {
+            <img [src]="img.url" [alt]="product()!.name" class="product-image" />
+          }
+        } @else {
+          <div class="no-image">Sin imagen</div>
+        }
+      </div>
+
+      <div class="info">
+        <p class="description">{{ product()!.description || 'Sin descripcion' }}</p>
+        <p class="price">{{ product()!.price | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
+        <p class="stock">Stock: {{ product()!.stock }}</p>
+        <p class="category">Categoria: {{ product()!.category?.name }}</p>
+
+        @if (isAuthenticated$ | async) {
+          <div class="actions">
+            <button type="button" (click)="addToFavorite()">Agregar a favoritos</button>
+            <button type="button" (click)="removeFromFavorite()">Quitar de favoritos</button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
