@@ -19,7 +19,7 @@
   </div>
 
   @if (loading()) {
-    <p class="loading">Cargando productos...</p>
+    <app-loading message="Cargando productos..."></app-loading>
   } @else if (errorMessage() !== null) {
     <p class="error" role="alert">{{ errorMessage() }}</p>
   } @else if (products().length === 0) {
