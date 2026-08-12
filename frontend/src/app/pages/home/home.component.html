@@ -12,19 +12,21 @@
       (ngModelChange)="selectedCategory.set($event)"
     >
       <option value="">Todas las categorías</option>
-      @for (cat of categories; track cat.id) {
+      @for (cat of categories(); track cat.id) {
         <option [value]="cat.id">{{ cat.name }}</option>
       }
     </select>
   </div>
 
-  @if (loading) {
+  @if (loading()) {
     <p class="loading">Cargando productos...</p>
-  } @else if (filteredProducts().length === 0) {
+  } @else if (errorMessage() !== null) {
+    <p class="error" role="alert">{{ errorMessage() }}</p>
+  } @else if (products().length === 0) {
     <p class="empty">No hay productos para mostrar.</p>
   } @else {
     <div class="grid">
-      @for (p of filteredProducts(); track p.id) {
+      @for (p of products(); track p.id) {
         <app-product-card [product]="p" (productClick)="onProductClick($event)"></app-product-card>
       }
     </div>
