@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Product } from '../../models/product';
 import { Category } from '../../models/category';
+import { ProductCardComponent } from '../../components/ui/product-card/product-card.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ProductCardComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -40,4 +41,9 @@ export class HomeComponent {
       return matchesSearch && matchesCategory;
     });
   });
+
+  onProductClick(id: string) {
+    console.log('Product clicked:', id);
+    // TODO: navegar a /products/:id cuando exista la página de detalle
+  }
 }
