@@ -1,0 +1,14 @@
+.navbar-brand {
+  font-weight: 600;
+}
+
+.btn-link.nav-link {
+  text-decoration: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.btn-link.nav-link:hover {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
