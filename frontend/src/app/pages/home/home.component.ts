@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Product } from '../../models/product';
 import { Category } from '../../models/category';
 import { ProductCardComponent } from '../../components/ui/product-card/product-card.component';
+import { LoadingComponent } from '../../components/ui/loading/loading.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductCardComponent],
+  imports: [CommonModule, FormsModule, ProductCardComponent, LoadingComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

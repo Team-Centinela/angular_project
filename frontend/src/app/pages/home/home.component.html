@@ -21,7 +21,7 @@
   </div>
 
   @if (loading) {
-    <p class="loading">Cargando productos...</p>
+    <app-loading message="Cargando productos..."></app-loading>
   } @else if (filteredProducts().length === 0) {
     <p class="empty">No hay productos para mostrar.</p>
   } @else {
