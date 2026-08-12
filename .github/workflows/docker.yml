@@ -1,0 +1,20 @@
+name: Docker validate
+
+on:
+  pull_request:
+    paths:
+      - 'docker-compose.yml'
+      - 'frontend/Dockerfile'
+      - 'backend/Dockerfile'
+      - '.github/workflows/docker.yml'
+
+jobs:
+  validate:
+    name: Validate docker-compose
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Prepare .env from template
+        run: cp backend/.env.example backend/.env
+      - name: Validate docker-compose
+        run: docker compose config --quiet
