@@ -13,8 +13,7 @@ Aplicación web fullstack para la gestión de productos con autenticación, que 
 | Sebastian Torres | Desarrollador Frontend |
 
 ### Responsable del encargo
-- Carlos D. Castaño, Team Lead
-
+- Carlos D. Castaño, Stake Holder
 ## 🛠 Tecnologías
 
 ### Frontend

@@ -1,8 +1,7 @@
 # CODEOWNERS — review assignments.
 # See docs/git-workflow.md §"Review process" for the full review flow.
 #
-# Frontend code is reviewed by any teammate. The integrator whose code is
-# affected (per the issue tracker) does the review when relevant.
+# Frontend code is reviewed by any teammate. The integrator whose code is affected (per the issue tracker) does the review when relevant.
 # SrLampi1001 is the preferred reviewer for governance, CI, and infra changes.
 # Carlos (stakeholder) does not review code.
 
