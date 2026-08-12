@@ -170,8 +170,6 @@ The team is flat for frontend code. The reviewer is:
 2. Otherwise, any teammate with time — `SrLampi1001` is the preferred general reviewer.
 3. The incident-response reviewer (for security/CI/governance changes) is `SrLampi1001`.
 
-Carlos is the **stakeholder** (activity owner). He does not review code.
-
 ## Quick reference
 
 | Action | How |
