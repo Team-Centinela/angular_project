@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -21,6 +21,7 @@ import { extractErrorMessage } from '../../utils/error.util';
 export class HomeComponent {
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
+  private destroyRef = inject(DestroyRef);
 
   readonly searchText = signal('');
   readonly selectedCategory = signal('');
@@ -29,13 +30,19 @@ export class HomeComponent {
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
 
+  /** Debounce window for search/category changes, in milliseconds. */
+  private static readonly SEARCH_DEBOUNCE_MS = 300;
+
   constructor() {
     this.loadCategories();
 
     effect(() => {
       const search = this.searchText();
       const categoryId = this.selectedCategory();
-      this.loadProducts(search, categoryId);
+      const timer = setTimeout(() => {
+        this.loadProducts(search, categoryId);
+      }, HomeComponent.SEARCH_DEBOUNCE_MS);
+      this.destroyRef.onDestroy(() => clearTimeout(timer));
     }, { allowSignalWrites: true });
   }
 
