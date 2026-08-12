@@ -118,8 +118,8 @@ export class ProductsComponent implements OnInit {
           this.totalPages.set(res.totalPages);
           this.loading.set(false);
         },
-        error: () => {
-          this.errorMsg.set('No se pudieron cargar los productos');
+        error: (err) => {
+          this.errorMsg.set(extractErrorMessage(err, 'No se pudieron cargar los productos'));
           this.loading.set(false);
         },
       });
@@ -131,7 +131,7 @@ export class ProductsComponent implements OnInit {
       .pipe(takeUntilDestroyed())
       .subscribe({
         next: (cats) => this.categories.set(cats),
-        error: () => this.errorMsg.set('No se pudieron cargar las categorías'),
+        error: (err) => this.errorMsg.set(extractErrorMessage(err, 'No se pudieron cargar las categorías')),
       });
   }
 
