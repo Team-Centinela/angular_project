@@ -6,6 +6,7 @@ import { ProductService } from '../../services/product.service';
 import { AuthService } from '../../services/auth.service';
 import { FavoritesService } from '../../services/favorites.service';
 import { Product } from '../../models/product';
+import { extractErrorMessage } from '../../utils/error.util';
 
 @Component({
   selector: 'app-product-detail',
@@ -23,6 +24,7 @@ export class ProductDetailComponent implements OnInit {
   product = signal<Product | null>(null);
   loading = signal(false);
   errorMsg = signal('');
+  message = signal('');
 
   isAuthenticated$ = this.authService.isAuthenticated$;
 
@@ -42,8 +44,8 @@ export class ProductDetailComponent implements OnInit {
           this.product.set(p);
           this.loading.set(false);
         },
-        error: () => {
-          this.errorMsg.set('Producto no encontrado');
+        error: (err) => {
+          this.errorMsg.set(extractErrorMessage(err, 'Producto no encontrado'));
           this.loading.set(false);
         }
       });
@@ -52,22 +54,26 @@ export class ProductDetailComponent implements OnInit {
   addToFavorite() {
     const p = this.product();
     if (!p) return;
+    this.errorMsg.set('');
+    this.message.set('');
     this.favoritesService.add(p.id)
       .pipe(takeUntilDestroyed())
       .subscribe({
-        next: () => alert('Agregado a favoritos'),
-        error: (err) => this.errorMsg.set(err?.error?.message || 'Error al agregar')
+        next: () => this.message.set('Agregado a favoritos'),
+        error: (err) => this.errorMsg.set(extractErrorMessage(err, 'No se pudo agregar a favoritos')),
       });
   }
 
   removeFromFavorite() {
     const p = this.product();
     if (!p) return;
+    this.errorMsg.set('');
+    this.message.set('');
     this.favoritesService.remove(p.id)
       .pipe(takeUntilDestroyed())
       .subscribe({
-        next: () => alert('Removido de favoritos'),
-        error: (err) => this.errorMsg.set(err?.error?.message || 'Error al remover')
+        next: () => this.message.set('Removido de favoritos'),
+        error: (err) => this.errorMsg.set(extractErrorMessage(err, 'No se pudo quitar de favoritos')),
       });
   }
 }
