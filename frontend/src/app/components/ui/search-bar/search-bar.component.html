@@ -1,0 +1,8 @@
+<input
+  type="text"
+  class="search-input"
+  placeholder="Buscar productos..."
+  [ngModel]="value()"
+  (ngModelChange)="search.emit($event)"
+  aria-label="Buscar productos"
+/>

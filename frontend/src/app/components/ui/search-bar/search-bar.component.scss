@@ -1,0 +1,20 @@
+:host {
+  display: block;
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font: inherit;
+  color: inherit;
+
+  &:focus {
+    outline: 2px solid #1a8917;
+    outline-offset: 2px;
+  }
+}
