@@ -7,6 +7,7 @@
  * Issues que cierra:
  *   - #16 — Crear página Products (CRUD)
  *   - #32 — Implementar CRUD de Products
+ *   - #59 — UI de paginación en Products CRUD
  *
  * Stack:
  *   - Standalone component (Angular 18)
@@ -15,6 +16,15 @@
  *   - currency pipe (spec evalúa Pipes)
  *   - inject() para DI
  *   - takeUntilDestroyed() para no dejar subscripciones vivas al destruir
+ *
+ * Decisiones de paginación (issue #59):
+ *   - pageSize por defecto = 10 (alineado con el default del backend).
+ *   - El usuario puede elegir 10 / 25 / 50 / 100 vía <select>.
+ *   - Cuando cambia pageSize, se resetea a la página 1 (no tiene sentido
+ *     pedir "página 5 de 100" si pasamos a "10 por página").
+ *   - Cuando eliminamos un producto, recalculamos la página actual:
+ *     si la página quedó vacía (porque borramos el último elemento),
+ *     retrocedemos una página para evitar mostrar tabla vacía.
  */
 
 import { CommonModule } from '@angular/common';
@@ -36,6 +46,9 @@ interface ProductForm {
   categoryId: string;
   images: string[];
 }
+
+/** Tamaños de página que el usuario puede elegir en el <select>. */
+const PAGE_SIZE_OPTIONS = [10, 25, 50, 100] as const;
 
 @Component({
   selector: 'app-products',
@@ -59,6 +72,18 @@ export class ProductsComponent implements OnInit {
   editingId: string | null = null;
   imageUrl = '';
 
+  // ---------- Estado de paginación (issue #59) ----------
+  /** Página actual, 1-based (la primera página es 1, no 0). */
+  currentPage = signal(1);
+  /** Tamaño de página actual. Inicia en 10 (default del backend). */
+  pageSize = signal<number>(10);
+  /** Total de productos que existen en el backend (no solo en esta página). */
+  total = signal(0);
+  /** Total de páginas calculado: ceil(total / pageSize). */
+  totalPages = signal(0);
+  /** Opciones que mostraremos en el <select> de tamaño de página. */
+  pageSizeOptions = PAGE_SIZE_OPTIONS;
+
   // ---------- Estado del formulario (propiedad normal) ----------
   form: ProductForm = {
     name: '',
@@ -76,25 +101,31 @@ export class ProductsComponent implements OnInit {
 
   // ---------- Carga ----------
 
-  /** Pide la lista de productos al backend. Pasa limit=1000 para traer todos. */
+  /**
+   * Pide la lista de productos al backend respetando paginación.
+   * El backend devuelve { data, total, page, limit, totalPages }; solo
+   * guardamos lo que necesitamos para mostrar la tabla y los controles.
+   */
   loadProducts() {
     this.loading.set(true);
     this.productService
-      .getAll(undefined, undefined, 1, 1000)
+      .getAll(undefined, undefined, this.currentPage(), this.pageSize())
       .pipe(takeUntilDestroyed())
       .subscribe({
         next: (res) => {
           this.products.set(res.data);
+          this.total.set(res.total);
+          this.totalPages.set(res.totalPages);
           this.loading.set(false);
         },
         error: () => {
           this.errorMsg.set('No se pudieron cargar los productos');
           this.loading.set(false);
-      },
-    });
+        },
+      });
   }
 
-  /** Pide las categorías para popular el <select>. */
+  /** Pide las categorías para popular el <select> del modal. */
   loadCategories() {
     this.categoryService.getAll()
       .pipe(takeUntilDestroyed())
@@ -104,7 +135,47 @@ export class ProductsComponent implements OnInit {
       });
   }
 
-  // ---------- Acciones ----------
+  // ---------- Controles de paginación ----------
+
+  /** Va a la primera página (botón |<). */
+  goFirst() {
+    if (this.currentPage() === 1) return;
+    this.currentPage.set(1);
+    this.loadProducts();
+  }
+
+  /** Retrocede una página (botón <). Deshabilitado si ya estamos en la primera. */
+  goPrev() {
+    if (this.currentPage() <= 1) return;
+    this.currentPage.update((p) => p - 1);
+    this.loadProducts();
+  }
+
+  /** Avanza una página (botón >). Deshabilitado si ya estamos en la última. */
+  goNext() {
+    if (this.currentPage() >= this.totalPages()) return;
+    this.currentPage.update((p) => p + 1);
+    this.loadProducts();
+  }
+
+  /** Va a la última página (botón >|). */
+  goLast() {
+    if (this.currentPage() === this.totalPages()) return;
+    this.currentPage.set(this.totalPages());
+    this.loadProducts();
+  }
+
+  /**
+   * Cambia el tamaño de página. Resetea a la página 1 porque las posiciones
+   * anteriores dejan de tener sentido (la "página 5 con 100 items" ahora
+   * contiene productos distintos a la "página 5 con 10 items").
+   */
+  onPageSizeChange() {
+    this.currentPage.set(1);
+    this.loadProducts();
+  }
+
+  // ---------- Acciones del modal ----------
 
   /** Abre el modal en modo CREAR. */
   openNew() {
@@ -194,13 +265,29 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  /** Pide confirmación y elimina. */
+  /**
+   * Pide confirmación y elimina.
+   *
+   * Edge case: si borramos el último elemento de la última página,
+   * la página actual queda vacía. Solución: detectarlo y pedir
+   * `currentPage - 1` para que la tabla siempre tenga al menos
+   * un ítem visible (si existe).
+   */
   delete(p: Product) {
     if (!confirm(`¿Eliminar "${p.name}"?`)) return;
     this.productService.delete(p.id)
       .pipe(takeUntilDestroyed())
       .subscribe({
-        next: () => this.loadProducts(),
+        next: () => {
+          // Si era el último elemento de la última página, retrocede.
+          if (
+            this.products().length === 1 &&
+            this.currentPage() > 1
+          ) {
+            this.currentPage.update((page) => page - 1);
+          }
+          this.loadProducts();
+        },
         error: (err) => this.errorMsg.set(extractErrorMessage(err, 'No se pudo eliminar')),
       });
   }
