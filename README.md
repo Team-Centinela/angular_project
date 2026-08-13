@@ -188,7 +188,7 @@ npm start
 ### Con Docker
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 ## 🌐 URLs por defecto
