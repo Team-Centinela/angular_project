@@ -18,7 +18,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError((err: HttpErrorResponse) => {
-      if (err.status === 401 && !NO_REDIRECT_ON_401.includes(router.url)) {
+      const onAuthRoute = NO_REDIRECT_ON_401.some((r) => router.url.startsWith(r));
+      if (err.status === 401 && !onAuthRoute) {
         auth.clearSession();
         router.navigate(['/login'], {
           queryParams: { returnUrl: safeReturnUrl(router.url) },
