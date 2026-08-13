@@ -132,7 +132,7 @@ These are NOT required but will earn bonus points:
 - [ ] Reactive Forms instead of template-driven
 - [ ] Refresh Tokens implementation
 - [ ] Lazy Loading of routes
-- [ ] Unit Tests
+- [x] **Unit Tests** — added in #113 (Jest + jest-preset-angular). Initial smoke suite covers `error.util`, `safe-return-url.util`, and `auth.interceptor` (regressions for #86, #87, #92). Run with `npm test` in `frontend/`. CI runs it as a separate job in `.github/workflows/ci.yml`.
 - [ ] Docker setup
 - [ ] CI/CD pipeline
 - [ ] Animations
