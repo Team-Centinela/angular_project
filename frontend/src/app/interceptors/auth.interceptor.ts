@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
-import { safeReturnUrl } from '../utils/safe-return-url';
+import { safeReturnUrl } from '../utils/safe-return-url.util';
 
 const NO_REDIRECT_ON_401: readonly string[] = ['/login', '/register'];
 

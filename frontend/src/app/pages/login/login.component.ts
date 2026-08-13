@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { extractErrorMessage } from '../../utils/error.util';
-import { safeReturnUrl } from '../../utils/safe-return-url';
+import { safeReturnUrl } from '../../utils/safe-return-url.util';
 
 @Component({
   selector: 'app-login',
