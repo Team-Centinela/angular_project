@@ -166,11 +166,12 @@ export class ProductsComponent implements OnInit {
   }
 
   /**
-   * Cambia el tamaño de página. Resetea a la página 1 porque las posiciones
+   * Cambia el tamaño de página y resetea a la página 1. Las posiciones
    * anteriores dejan de tener sentido (la "página 5 con 100 items" ahora
    * contiene productos distintos a la "página 5 con 10 items").
    */
-  onPageSizeChange() {
+  onPageSizeChange(newSize: number) {
+    this.pageSize.set(newSize);
     this.currentPage.set(1);
     this.loadProducts();
   }
