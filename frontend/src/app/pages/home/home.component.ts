@@ -1,4 +1,5 @@
 import { Component, effect, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -21,6 +22,7 @@ import { extractErrorMessage } from '../../utils/error.util';
 export class HomeComponent {
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
+  private router = inject(Router);
 
   readonly searchText = signal('');
   readonly selectedCategory = signal('');
@@ -46,7 +48,7 @@ export class HomeComponent {
   }
 
   onProductClick(id: string): void {
-    console.log('Product clicked:', id);
+    this.router.navigate(['/products', id]);
   }
 
   private loadCategories(): void {
