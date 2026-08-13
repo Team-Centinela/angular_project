@@ -29,7 +29,7 @@
     @for (p of products(); track p.id) {
       <tr>
         <td>{{ p.name }}</td>
-        <td>{{ p.category?.name }}</td>
+        <td>{{ p.category.name }}</td>
         <td>{{ p.price | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
         <td>{{ p.stock }}</td>
         <td>
