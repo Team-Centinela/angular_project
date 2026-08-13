@@ -26,6 +26,7 @@ src/app/
 ├── services/              # API services (HTTP only here)
 ├── guards/                # Route guards
 ├── interceptors/          # HTTP interceptors
+├── utils/                 # Shared helpers (kebab-case + `.util.ts` suffix — see Decisions log)
 ├── models/                # TypeScript interfaces
 └── app.routes.ts
 ```
@@ -105,6 +106,7 @@ The classroom spec (`gistfile1.md`) specifies Angular 22. The code was scaffolde
 | 2026-08-11 | Topic docs (not ADR-style) for governance in this sprint | `AGENTS.md` governance hierarchy |
 | 2026-08-11 | **PROPOSED** — awaiting team review: when a CI lint gate surfaces pre-existing issues in untouched `backend/` subtree code, surgical fixes (≤1 line per file: type annotations, `void` prefixes, targeted `eslint-disable` with justification) are permitted so the new gate can turn green. This is consistent with `docs/git-workflow.md` §"Working with backend subtree" — minimal diffs to keep subtree pulls clean are already allowed, and CI-lint compliance is in the same category. Non-surgical refactors of unrelated backend files remain forbidden. | This file, this row |
 | 2026-08-12 | **ACCEPTED** — Migration was accepted and Architecture is sound, ARCHITECTURE.md may change after new Angular 22 skill is added later, but currently it's accepted to work on current sprint. Explicit acceptance recorded by SrLampi1001 (incident-response reviewer per `docs/git-workflow.md` §"Review process") on PR #73 review thread. | This file, this row |
+| 2026-08-13 | **PROPOSED** — awaiting team review: utility files in `frontend/src/app/utils/` use kebab-case with a `.util.ts` suffix (e.g. `safe-return-url.util.ts`), aligning with the role-suffix convention already used by `*.component.ts`, `*.service.ts`, `*.guard.ts`, `*.interceptor.ts`, `*.page.ts`. Models stay suffix-less (`models/product.ts`). Rename of `safe-return-url.ts` → `safe-return-url.util.ts` applied in this PR; team to ratify. | This file, this row |
 
 ## Pending follow-ups
 
