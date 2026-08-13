@@ -23,7 +23,7 @@
         <p class="description">{{ product()!.description || 'Sin descripcion' }}</p>
         <p class="price">{{ product()!.price | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
         <p class="stock">Stock: {{ product()!.stock }}</p>
-        <p class="category">Categoria: {{ product()!.category?.name }}</p>
+        <p class="category">Categoria: {{ product()!.category.name }}</p>
 
         @if (isAuthenticated$ | async) {
           <div class="actions">
