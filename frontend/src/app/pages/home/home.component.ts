@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -21,6 +21,7 @@ import { extractErrorMessage } from '../../utils/error.util';
 export class HomeComponent {
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
+  private destroyRef = inject(DestroyRef);
 
   readonly searchText = signal('');
   readonly selectedCategory = signal('');
@@ -52,7 +53,7 @@ export class HomeComponent {
   private loadCategories(): void {
     this.categoryService
       .getAll()
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (cats) => this.categories.set(cats),
         error: (err) => {
@@ -67,7 +68,7 @@ export class HomeComponent {
     this.errorMessage.set(null);
     this.productService
       .getAll(search || undefined, categoryId || undefined)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           this.products.set(response.data);
