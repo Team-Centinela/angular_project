@@ -13,14 +13,14 @@
  *    con signals).
  *  - Validación cliente antes de mandar al backend (UX).
  *  - `date` pipe para createdAt (requisito de Pipes del spec).
- *  - `takeUntilDestroyed()` en todas las subscripciones.
+ *  - `takeUntilDestroyed(this.destroyRef)` en todas las subscripciones.
  *  - `extractErrorMessage()` para mensajes del backend (NestJS).
  *
  *  No incluye botón de Logout porque está en su propia issue (#34).
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../models/user';
@@ -36,6 +36,7 @@ import { extractErrorMessage } from '../../utils/error.util';
 })
 export class ProfileComponent implements OnInit {
   private userService = inject(UserService);
+  private destroyRef = inject(DestroyRef);
 
   /** Datos del usuario autenticado (null mientras carga). */
   user = signal<User | null>(null);
@@ -61,7 +62,7 @@ export class ProfileComponent implements OnInit {
     this.errorMsg.set('');
     this.userService
       .getProfile()
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (u) => {
           this.user.set(u);
@@ -106,7 +107,7 @@ export class ProfileComponent implements OnInit {
         currentPassword: this.currentPassword,
         newPassword: this.newPassword,
       })
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (r) => {
           this.successMsg.set(r.message);
