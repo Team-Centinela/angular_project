@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -20,6 +20,7 @@ export class ProductDetailComponent implements OnInit {
   private productService = inject(ProductService);
   private authService = inject(AuthService);
   private favoritesService = inject(FavoritesService);
+  private destroyRef = inject(DestroyRef);
 
   product = signal<Product | null>(null);
   loading = signal(false);
@@ -38,7 +39,7 @@ export class ProductDetailComponent implements OnInit {
   loadProduct(id: string) {
     this.loading.set(true);
     this.productService.getOne(id)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (p) => {
           this.product.set(p);
@@ -57,7 +58,7 @@ export class ProductDetailComponent implements OnInit {
     this.errorMsg.set('');
     this.message.set('');
     this.favoritesService.add(p.id)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.message.set('Agregado a favoritos'),
         error: (err) => this.errorMsg.set(extractErrorMessage(err, 'No se pudo agregar a favoritos')),
@@ -70,7 +71,7 @@ export class ProductDetailComponent implements OnInit {
     this.errorMsg.set('');
     this.message.set('');
     this.favoritesService.remove(p.id)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.message.set('Removido de favoritos'),
         error: (err) => this.errorMsg.set(extractErrorMessage(err, 'No se pudo quitar de favoritos')),

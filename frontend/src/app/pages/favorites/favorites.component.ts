@@ -19,7 +19,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProductCardComponent } from '../../components/ui/product-card/product-card.component';
 import { Product } from '../../models/product';
@@ -35,6 +35,7 @@ import { extractErrorMessage } from '../../utils/error.util';
 })
 export class FavoritesComponent implements OnInit {
   private favoritesService = inject(FavoritesService);
+  private destroyRef = inject(DestroyRef);
 
   favorites = signal<Product[]>([]);
   loading = signal(false);
@@ -49,7 +50,7 @@ export class FavoritesComponent implements OnInit {
     this.loading.set(true);
     this.favoritesService
       .getAll()
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (list) => {
           this.favorites.set(list);
@@ -66,7 +67,7 @@ export class FavoritesComponent implements OnInit {
   quitar(p: Product) {
     this.favoritesService
       .remove(p.id)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.load(),
         error: (err) =>

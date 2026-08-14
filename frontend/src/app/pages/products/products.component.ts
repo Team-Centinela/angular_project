@@ -15,7 +15,7 @@
  *   - @if / @for de control flow (spec evalúa directivas nuevas)
  *   - currency pipe (spec evalúa Pipes)
  *   - inject() para DI
- *   - takeUntilDestroyed() para no dejar subscripciones vivas al destruir
+ *   - takeUntilDestroyed(this.destroyRef) para no dejar subscripciones vivas al destruir
  *
  * Decisiones de paginación (issue #59):
  *   - pageSize por defecto = 10 (alineado con el default del backend).
@@ -28,7 +28,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Category } from '../../models/category';
@@ -61,6 +61,7 @@ export class ProductsComponent implements OnInit {
   // ---------- Inyección ----------
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
+  private destroyRef = inject(DestroyRef);
 
   // ---------- Estado (signals para lectura) ----------
   products = signal<Product[]>([]);
@@ -110,7 +111,7 @@ export class ProductsComponent implements OnInit {
     this.loading.set(true);
     this.productService
       .getAll(undefined, undefined, this.currentPage(), this.pageSize())
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
           this.products.set(res.data);
@@ -128,7 +129,7 @@ export class ProductsComponent implements OnInit {
   /** Pide las categorías para popular el <select> del modal. */
   loadCategories() {
     this.categoryService.getAll()
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (cats) => this.categories.set(cats),
         error: (err) => this.errorMsg.set(extractErrorMessage(err, 'No se pudieron cargar las categorías')),
@@ -255,7 +256,7 @@ export class ProductsComponent implements OnInit {
       ? this.productService.update(id, body)
       : this.productService.create(body);
 
-    req$.pipe(takeUntilDestroyed()).subscribe({
+    req$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.showForm = false;
         this.loadProducts();
@@ -277,7 +278,7 @@ export class ProductsComponent implements OnInit {
   delete(p: Product) {
     if (!confirm(`¿Eliminar "${p.name}"?`)) return;
     this.productService.delete(p.id)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           // Si era el último elemento de la última página, retrocede.
