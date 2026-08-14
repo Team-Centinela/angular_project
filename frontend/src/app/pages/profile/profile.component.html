@@ -33,13 +33,13 @@
 
 <form (ngSubmit)="changePassword()">
   <label>Contraseña actual *</label>
-  <input type="password" [(ngModel)]="currentPassword" name="currentPassword" required />
+  <input type="password" [(ngModel)]="currentPassword" name="currentPassword" required autocomplete="current-password" />
 
   <label>Nueva contraseña *</label>
-  <input type="password" [(ngModel)]="newPassword" name="newPassword" required minlength="6" />
+  <input type="password" [(ngModel)]="newPassword" name="newPassword" required minlength="6" autocomplete="new-password" />
 
   <label>Confirmar nueva contraseña *</label>
-  <input type="password" [(ngModel)]="newPassword2" name="newPassword2" required minlength="6" />
+  <input type="password" [(ngModel)]="newPassword2" name="newPassword2" required minlength="6" autocomplete="new-password" />
 
   <button type="submit">Actualizar contraseña</button>
 </form>
