@@ -11,13 +11,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { ChangePasswordDto } from '../models/user.dto';
 import { User } from '../models/user';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private http = inject(HttpClient);
-  private base = 'http://localhost:3000/users/me';
+  private base = `${environment.apiBaseUrl}/users/me`;
 
   /** Devuelve los datos del usuario actualmente autenticado. */
   getProfile(): Observable<User> {
