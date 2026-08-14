@@ -171,7 +171,7 @@ export class ProductsComponent implements OnInit {
    * contiene productos distintos a la "página 5 con 10 items").
    */
   onPageSizeChange(newSize: number) {
-    this.pageSize.set(newSize);
+    this.pageSize.set(Number(newSize));
     this.currentPage.set(1);
     this.loadProducts();
   }

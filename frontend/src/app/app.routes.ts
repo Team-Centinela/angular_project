@@ -11,6 +11,6 @@ export const routes: Routes = [
   { path: 'categories', canActivate: [authGuard], loadComponent: () => import('./pages/categories/categories.component').then(m => m.CategoriesComponent) },
   { path: 'favorites', canActivate: [authGuard], loadComponent: () => import('./pages/favorites/favorites.component').then(m => m.FavoritesComponent) },
   { path: 'profile', canActivate: [authGuard], loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent) },
-  { path: 'product/:id', loadComponent: () => import('./pages/product-detail/product-detail.component').then(m => m.ProductDetailComponent) },
+  { path: 'products/:id', loadComponent: () => import('./pages/product-detail/product-detail.component').then(m => m.ProductDetailComponent) },
   { path: '**', redirectTo: '' }
 ];
