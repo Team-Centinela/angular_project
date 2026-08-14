@@ -1,5 +1,8 @@
 <div class="home">
-  <h1>Productos</h1>
+  <div class="header">
+    <h1>Productos</h1>
+    <p class="subtitle">{{ products().length }} artículos disponibles en el catálogo</p>
+  </div>
 
   <div class="filters">
     <app-search-bar
@@ -7,15 +10,17 @@
       (search)="searchText.set($event)"
     ></app-search-bar>
 
-    <select
-      [ngModel]="selectedCategory()"
-      (ngModelChange)="selectedCategory.set($event)"
-    >
-      <option value="">Todas las categorías</option>
-      @for (cat of categories(); track cat.id) {
-        <option [value]="cat.id">{{ cat.name }}</option>
-      }
-    </select>
+    <div class="select-wrapper">
+      <select
+        [ngModel]="selectedCategory()"
+        (ngModelChange)="selectedCategory.set($event)"
+      >
+        <option value="">Todas las categorías</option>
+        @for (cat of categories(); track cat.id) {
+          <option [value]="cat.id">{{ cat.name }}</option>
+        }
+      </select>
+    </div>
   </div>
 
   @if (loading()) {
