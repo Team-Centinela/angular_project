@@ -1,0 +1,39 @@
+<div class="home">
+  <div class="header">
+    <h1>Productos</h1>
+    <p class="subtitle">{{ products().length }} artículos disponibles en el catálogo</p>
+  </div>
+
+  <div class="filters">
+    <app-search-bar
+      [value]="searchText()"
+      (search)="searchText.set($event)"
+    ></app-search-bar>
+
+    <div class="select-wrapper">
+      <select
+        [ngModel]="selectedCategory()"
+        (ngModelChange)="selectedCategory.set($event)"
+      >
+        <option value="">Todas las categorías</option>
+        @for (cat of categories(); track cat.id) {
+          <option [value]="cat.id">{{ cat.name }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <app-loading message="Cargando productos..."></app-loading>
+  } @else if (errorMessage() !== null) {
+    <p class="error" role="alert">{{ errorMessage() }}</p>
+  } @else if (products().length === 0) {
+    <p class="empty">No hay productos para mostrar.</p>
+  } @else {
+    <div class="grid">
+      @for (p of products(); track p.id) {
+        <app-product-card [product]="p" (productClick)="onProductClick($event)"></app-product-card>
+      }
+    </div>
+  }
+</div>

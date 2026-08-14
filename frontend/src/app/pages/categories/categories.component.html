@@ -1,0 +1,59 @@
+<!--
+  Plantilla: categories.component.html
+  Mismo patrón que products.component.html pero sin precio/stock/imágenes.
+-->
+
+<h2>Categorías</h2>
+
+<button type="button" (click)="openNew()">+ Nueva categoría</button>
+
+@if (errorMsg()) {
+  <p class="error">{{ errorMsg() }}</p>
+}
+
+@if (loading()) {
+  <p class="loading">Cargando categorías...</p>
+}
+
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (c of categories(); track c.id) {
+      <tr>
+        <td>{{ c.name }}</td>
+        <td>{{ c.description || '—' }}</td>
+        <td>
+          <button type="button" (click)="openEdit(c)">Editar</button>
+          <button type="button" (click)="delete(c)">Eliminar</button>
+        </td>
+      </tr>
+    } @empty {
+      <tr><td colspan="3" class="empty">No hay categorías todavía.</td></tr>
+    }
+  </tbody>
+</table>
+
+@if (showForm) {
+  <div class="modal">
+    <div class="modal-box">
+      <h3>{{ editingId ? 'Editar categoría' : 'Nueva categoría' }}</h3>
+
+      <label>Nombre *</label>
+      <input type="text" [(ngModel)]="form.name" name="name" maxlength="100" />
+
+      <label>Descripción</label>
+      <textarea rows="3" [(ngModel)]="form.description" name="description" maxlength="255"></textarea>
+
+      <div class="actions">
+        <button type="button" (click)="save()">Guardar</button>
+        <button type="button" (click)="cancel()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+}

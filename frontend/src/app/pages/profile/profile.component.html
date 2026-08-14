@@ -1,0 +1,45 @@
+<!--
+  Plantilla: profile.component.html
+  Estructura:
+    1. Título
+    2. Mensajes (error / success / loading)
+    3. Datos del usuario (con @if (user(); as u))
+    4. Formulario para cambiar contraseña
+-->
+
+<h2>Mi perfil</h2>
+
+@if (errorMsg()) {
+  <p class="error">{{ errorMsg() }}</p>
+}
+@if (successMsg()) {
+  <p class="success">{{ successMsg() }}</p>
+}
+
+@if (loading()) {
+  <p class="loading">Cargando perfil...</p>
+}
+
+@if (user(); as u) {
+  <div class="profile-info">
+    <p><strong>Nombre:</strong> {{ u.name }}</p>
+    <p><strong>Email:</strong> {{ u.email }}</p>
+    <!-- Pipe `date` (requisito de Pipes del spec). -->
+    <p><strong>Miembro desde:</strong> {{ u.createdAt | date:'longDate' }}</p>
+  </div>
+}
+
+<h3>Cambiar contraseña</h3>
+
+<form (ngSubmit)="changePassword()">
+  <label>Contraseña actual *</label>
+  <input type="password" [(ngModel)]="currentPassword" name="currentPassword" required autocomplete="current-password" />
+
+  <label>Nueva contraseña *</label>
+  <input type="password" [(ngModel)]="newPassword" name="newPassword" required minlength="6" autocomplete="new-password" />
+
+  <label>Confirmar nueva contraseña *</label>
+  <input type="password" [(ngModel)]="newPassword2" name="newPassword2" required minlength="6" autocomplete="new-password" />
+
+  <button type="submit">Actualizar contraseña</button>
+</form>

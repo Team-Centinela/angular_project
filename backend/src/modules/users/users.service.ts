@@ -21,7 +21,9 @@ export class UsersService {
   ) {}
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { email } });
+    return this.usersRepository.findOne({
+      where: { email: this.normalizeEmail(email) },
+    });
   }
 
   async findById(id: string): Promise<User> {
@@ -33,7 +35,8 @@ export class UsersService {
   }
 
   async create(name: string, email: string, password: string): Promise<User> {
-    const existing = await this.findByEmail(email);
+    const normalized = this.normalizeEmail(email);
+    const existing = await this.findByEmail(normalized);
     if (existing) {
       throw new ConflictException('Ya existe una cuenta con este correo');
     }
@@ -41,7 +44,7 @@ export class UsersService {
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     const user = this.usersRepository.create({
       name,
-      email,
+      email: normalized,
       password: hashedPassword,
     });
     return this.usersRepository.save(user);
@@ -79,5 +82,9 @@ export class UsersService {
       email: user.email,
       createdAt: user.createdAt,
     };
+  }
+
+  private normalizeEmail(email: string): string {
+    return email?.trim().toLowerCase() ?? email;
   }
 }

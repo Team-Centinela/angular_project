@@ -23,6 +23,7 @@ import { FavoritesModule } from './modules/favorites/favorites.module';
         autoLoadEntities: true,
         synchronize: false,
         migrations: [__dirname + '/migrations/*{.ts,.js}'],
+        migrationsRun: true,
         ssl: { rejectUnauthorized: false },
       }),
     }),

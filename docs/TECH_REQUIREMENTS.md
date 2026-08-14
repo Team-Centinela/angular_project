@@ -132,7 +132,7 @@ These are NOT required but will earn bonus points:
 - [ ] Reactive Forms instead of template-driven
 - [ ] Refresh Tokens implementation
 - [ ] Lazy Loading of routes
-- [ ] Unit Tests
+- [ ] Unit Tests — bootstrapped in #113 as a *bonus* item via PR #118 (Jest + jest-preset-angular). Promotion from Bonus to a sprint requirement needs team ratification (see `docs/architecture.md` §"Decisions log", PROPOSED entry 2026-08-14).
 - [ ] Docker setup
 - [ ] CI/CD pipeline
 - [ ] Animations

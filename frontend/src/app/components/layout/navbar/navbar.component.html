@@ -1,0 +1,79 @@
+<nav class="app-navbar">
+  <div class="nav-container">
+    <div class="nav-brand-group">
+      <button
+        class="nav-sidebar-toggle"
+        type="button"
+        (click)="toggleSidebar()"
+        title="Alternar menú lateral"
+        [attr.aria-expanded]="isSidebarOpen()"
+        aria-label="Abrir o cerrar menú lateral"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <a class="nav-brand" routerLink="/" (click)="closeMenu()">Gestión de Productos</a>
+    </div>
+
+    <button
+      class="nav-toggle"
+      type="button"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="isMenuOpen()"
+      aria-label="Abrir menú de navegación móvil"
+    >
+      @if (isMenuOpen()) {
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      } @else {
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="1"></circle>
+          <circle cx="12" cy="5" r="1"></circle>
+          <circle cx="12" cy="19" r="1"></circle>
+        </svg>
+      }
+    </button>
+
+    <div class="nav-content" [class.is-open]="isMenuOpen()">
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" (click)="closeMenu()">Inicio</a>
+        </li>
+      </ul>
+      <ul class="nav-auth">
+        @if (isAuthenticated$ | async) {
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/favorites" (click)="closeMenu()">Favoritos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/profile" (click)="closeMenu()">
+              {{ userName }}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/products" (click)="closeMenu()">Productos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/categories" (click)="closeMenu()">Categorías</a>
+          </li>
+          <li class="nav-item">
+            <button class="nav-btn-logout" (click)="logout()">Cerrar sesión</button>
+          </li>
+        } @else {
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login" (click)="closeMenu()">Iniciar Sesión</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-btn-register" routerLink="/register" (click)="closeMenu()">Registrarse</a>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</nav>

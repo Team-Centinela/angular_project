@@ -1,0 +1,22 @@
+:host {
+  margin-top: auto;
+  display: block;
+}
+
+.app-footer {
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  padding: 1.5rem 1rem;
+}
+
+.footer-container {
+  max-width: 1152px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.footer-text {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
