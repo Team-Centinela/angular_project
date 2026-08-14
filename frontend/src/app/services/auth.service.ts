@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, BehaviorSubject, finalize, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { User } from '../models/user';
 
 interface LoginDto {
@@ -26,7 +27,7 @@ export interface LogoutResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
-  private readonly base = 'http://localhost:3000/auth';
+  private readonly base = `${environment.apiBaseUrl}/auth`;
   private readonly tokenKey = 'accessToken';
   private readonly userKey = 'authUser';
   private readonly authenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());

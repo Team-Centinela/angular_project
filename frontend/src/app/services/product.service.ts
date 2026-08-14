@@ -10,6 +10,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import {
   CreateProductDto,
   ProductListResponse,
@@ -20,7 +21,7 @@ import { Product } from '../models/product';
 @Injectable({ providedIn: 'root' })
 export class ProductService {
   private http = inject(HttpClient);
-  private base = 'http://localhost:3000/products';
+  private base = `${environment.apiBaseUrl}/products`;
 
   getAll(
     search?: string,

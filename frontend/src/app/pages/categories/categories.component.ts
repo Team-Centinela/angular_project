@@ -14,7 +14,7 @@
  */
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Category } from '../../models/category';
@@ -30,6 +30,7 @@ import { extractErrorMessage } from '../../utils/error.util';
 })
 export class CategoriesComponent implements OnInit {
   private categoryService = inject(CategoryService);
+  private destroyRef = inject(DestroyRef);
 
   categories = signal<Category[]>([]);
   loading = signal(false);
@@ -48,7 +49,7 @@ export class CategoriesComponent implements OnInit {
   loadAll() {
     this.loading.set(true);
     this.categoryService.getAll()
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (cats) => {
           this.categories.set(cats);
@@ -97,7 +98,7 @@ export class CategoriesComponent implements OnInit {
     const req$ = id
       ? this.categoryService.update(id, body)
       : this.categoryService.create(body);
-    req$.pipe(takeUntilDestroyed()).subscribe({
+    req$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.showForm = false;
         this.loadAll();
@@ -111,7 +112,7 @@ export class CategoriesComponent implements OnInit {
   delete(c: Category) {
     if (!confirm(`¿Eliminar "${c.name}"?`)) return;
     this.categoryService.delete(c.id)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.loadAll(),
         error: (err) =>
