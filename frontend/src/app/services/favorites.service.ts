@@ -17,13 +17,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { Favorite } from '../models/favorite';
 import { Product } from '../models/product';
 
 @Injectable({ providedIn: 'root' })
 export class FavoritesService {
   private http = inject(HttpClient);
-  private base = 'http://localhost:3000/favorites';
+  private base = `${environment.apiBaseUrl}/favorites`;
 
   /** Devuelve los productos favoritos del usuario (autenticado). */
   getAll(): Observable<Product[]> {

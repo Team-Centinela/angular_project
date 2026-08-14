@@ -47,7 +47,7 @@ JWT_EXPIRES_IN=1d
 
 When copying to `.env`, replace placeholders with real values. **Do not** commit the resulting `.env`.
 
-The frontend does not need a `.env.example` — it uses the proxy (`frontend/proxy.conf.json`) and has no client-side secrets.
+The frontend ships `frontend/.env.example` as a placeholder for `API_BASE_URL`. The values used by `ng build` / `ng serve` come from `frontend/src/environments/environment*.ts` (selected by `fileReplacements` in `angular.json`). The frontend has no client-side secrets; do not commit a real `frontend/.env`.
 
 ## GitHub secret scanning
 
