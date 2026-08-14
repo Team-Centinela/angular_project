@@ -10,6 +10,7 @@ import {
   IsString,
   IsUUID,
   IsUrl,
+  Matches,
   MaxLength,
   Min,
   MinLength,
@@ -20,6 +21,9 @@ export class CreateProductDto {
   @IsString()
   @MinLength(2)
   @MaxLength(150)
+  @Matches(/^[^<>]*$/, {
+    message: 'El nombre no puede contener etiquetas HTML',
+  })
   name: string;
 
   @ApiPropertyOptional({
