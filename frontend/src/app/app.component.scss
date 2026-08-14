@@ -3,6 +3,12 @@
   flex-direction: column;
   min-height: 100vh;
   background-color: var(--color-bg);
+
+  /* Ocultar sidebar en Login y Register */
+  &:has(app-login) app-sidebar,
+  &:has(app-register) app-sidebar {
+    display: none !important;
+  }
 }
 
 .layout {

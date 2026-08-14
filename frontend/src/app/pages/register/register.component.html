@@ -1,5 +1,14 @@
 <div class="auth-page">
   <div class="auth-card">
+    <div class="auth-brand-badge">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <line x1="19" x2="19" y1="8" y2="14"></line>
+        <line x1="22" x2="16" y1="11" y2="11"></line>
+      </svg>
+    </div>
+
     <div class="auth-header">
       <h1 class="auth-title">Crear Cuenta</h1>
       <p class="auth-subtitle">Regístrate para gestionar productos y favoritos</p>
@@ -8,69 +17,98 @@
     <form (ngSubmit)="submit()" #registerForm="ngForm" class="auth-form">
       <div class="form-group">
         <label class="form-label" for="name">Nombre completo</label>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          class="form-input"
-          placeholder="Tu nombre"
-          [(ngModel)]="name"
-          required
-          [disabled]="loading()"
-          autocomplete="name"
-        />
+        <div class="input-wrapper">
+          <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            class="form-input"
+            placeholder="Tu nombre completo"
+            [(ngModel)]="name"
+            required
+            [disabled]="loading()"
+            autocomplete="name"
+          />
+        </div>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="email">Correo electrónico</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          class="form-input"
-          placeholder="tu@correo.com"
-          [(ngModel)]="email"
-          required
-          [disabled]="loading()"
-          autocomplete="email"
-        />
+        <div class="input-wrapper">
+          <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+          </svg>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            class="form-input"
+            placeholder="tu@correo.com"
+            [(ngModel)]="email"
+            required
+            [disabled]="loading()"
+            autocomplete="email"
+          />
+        </div>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="password">Contraseña</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          class="form-input"
-          placeholder="Mínimo 6 caracteres"
-          [(ngModel)]="password"
-          required
-          minlength="6"
-          [disabled]="loading()"
-          autocomplete="new-password"
-        />
-        <span class="form-hint">Mínimo 6 caracteres.</span>
+        <div class="input-wrapper">
+          <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            class="form-input"
+            placeholder="Mínimo 6 caracteres"
+            [(ngModel)]="password"
+            required
+            minlength="6"
+            [disabled]="loading()"
+            autocomplete="new-password"
+          />
+        </div>
+        <span class="form-hint">Debe tener al menos 6 caracteres.</span>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="passwordConfirm">Confirmar contraseña</label>
-        <input
-          id="passwordConfirm"
-          name="passwordConfirm"
-          type="password"
-          class="form-input"
-          placeholder="Repite tu contraseña"
-          [(ngModel)]="passwordConfirm"
-          required
-          [disabled]="loading()"
-          autocomplete="new-password"
-        />
+        <div class="input-wrapper">
+          <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m9 12 2 2 4-4"></path>
+            <circle cx="12" cy="12" r="10"></circle>
+          </svg>
+          <input
+            id="passwordConfirm"
+            name="passwordConfirm"
+            type="password"
+            class="form-input"
+            placeholder="Repite la contraseña"
+            [(ngModel)]="passwordConfirm"
+            required
+            [disabled]="loading()"
+            autocomplete="new-password"
+          />
+        </div>
       </div>
 
       @if (errorMsg()) {
         <div class="auth-alert" role="alert">
-          {{ errorMsg() }}
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" x2="12" y1="8" y2="12"></line>
+            <line x1="12" x2="12.01" y1="16" y2="16"></line>
+          </svg>
+          <span>{{ errorMsg() }}</span>
         </div>
       }
 
@@ -83,12 +121,16 @@
           <span class="auth-spinner" aria-hidden="true"></span>
           <span>Registrando...</span>
         } @else {
-          <span>Crear cuenta</span>
+          <span>Crear cuenta gratis</span>
         }
       </button>
 
+      <div class="auth-divider">
+        <span>o</span>
+      </div>
+
       <p class="auth-footer">
-        ¿Ya tienes cuenta? <a routerLink="/login" class="auth-link">Inicia sesión</a>
+        ¿Ya tienes una cuenta? <a routerLink="/login" class="auth-link">Inicia sesión</a>
       </p>
     </form>
   </div>
