@@ -75,8 +75,19 @@
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   margin-top: 1rem;
+}
+
+.actions .message,
+.actions .error-msg {
+  flex-basis: 100%;
+}
+
+.error-msg {
+  color: #dc3545;
+  margin: 0;
 }
 
 button {

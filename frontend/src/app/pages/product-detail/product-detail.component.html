@@ -29,8 +29,11 @@
           <div class="actions">
             <button type="button" (click)="addToFavorite()">Agregar a favoritos</button>
             <button type="button" (click)="removeFromFavorite()">Quitar de favoritos</button>
+            @if (message()) {
+              <p class="message" role="status">{{ message() }}</p>
+            }
             @if (errorMsg()) {
-              <p class="error-msg">{{ errorMsg() }}</p>
+              <p class="error-msg" role="alert">{{ errorMsg() }}</p>
             }
           </div>
         }
