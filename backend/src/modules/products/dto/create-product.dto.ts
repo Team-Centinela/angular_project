@@ -10,14 +10,16 @@ import {
   IsString,
   IsUUID,
   IsUrl,
+  MaxLength,
   Min,
   MinLength,
 } from 'class-validator';
 
 export class CreateProductDto {
-  @ApiProperty({ example: 'Audífonos inalámbricos XT200' })
+  @ApiProperty({ example: 'Audífonos inalámbricos XT200', maxLength: 150 })
   @IsString()
   @MinLength(2)
+  @MaxLength(150)
   name: string;
 
   @ApiPropertyOptional({
